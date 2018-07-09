@@ -3,11 +3,15 @@ module.exports = {
   env: {
     es6: true,
     node: true,
+    jest: true,
   },
   extends: [
     'eslint:recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
+    'plugin:flowtype/recommended',
+    'prettier',
+    'prettier/flowtype',
   ],
   rules: {
     indent: ['error', 2],
@@ -15,4 +19,5 @@ module.exports = {
     quotes: ['error', 'single'],
     semi: ['error', 'always'],
   },
+  plugins: ['flowtype'],
 };

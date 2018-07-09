@@ -13,7 +13,7 @@ const Mozaik = {
   contentType,
   document,
   field,
-  project
+  project,
 };
 
 module.exports = Mozaik;

@@ -17,12 +17,10 @@ const createContentTypeMutation = `
 
 async function createContentType({ contentType }) {
   return MozaikAPI.call({
-    apiEndpoint,
-    accessToken,
     query: createContentTypeMutation,
     variables: {
-      contentType
-    }
+      contentType,
+    },
   });
 }
 

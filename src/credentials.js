@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+// const fs = require('fs');
+// const path = require('path');
 
 let apiEndpoint;
 let accessToken;
@@ -11,7 +11,8 @@ accessToken = process.env.MOZAIK_ACCESS_TOKEN;
 
 const credentials = {
   API_ENDPOINT: apiEndpoint,
-  ACCESS_TOKEN: accessToken
+  ACCESS_TOKEN: accessToken,
+  WORKSPACE_NAME: workspaceName,
 };
 
 module.exports = credentials;

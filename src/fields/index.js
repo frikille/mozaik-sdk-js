@@ -1,7 +1,7 @@
 const createField = require('./create');
 
 const field = {
-  create: createField
+  create: createField,
 };
 
 module.exports = field;

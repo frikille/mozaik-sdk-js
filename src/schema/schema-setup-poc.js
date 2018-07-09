@@ -1,3 +1,4 @@
+/* eslint no-unused-vars: 0, no-undef: 0 */
 const graphql = require('graphql');
 const { parse, buildASTSchema } = graphql;
 const fs = require('fs');

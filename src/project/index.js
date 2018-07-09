@@ -7,7 +7,7 @@ const project = {
   create: createProject,
   destroy: deleteProject,
   reset: resetProject,
-  update: updateProject
+  update: updateProject,
 };
 
 module.exports = project;

@@ -1,7 +1,7 @@
 const createAsset = require('./create');
 
 const asset = {
-  create: createAsset
+  create: createAsset,
 };
 
 module.exports = asset;

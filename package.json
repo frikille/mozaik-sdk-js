@@ -25,6 +25,7 @@
   "devDependencies": {
     "babel-eslint": "^8.2.5",
     "eslint": "^5.1.0",
+    "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-flowtype": "^2.50.0",
     "eslint-plugin-import": "^2.13.0",
     "flow-bin": "^0.76.0",

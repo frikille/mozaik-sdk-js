@@ -16,12 +16,10 @@ const createDocumentMutation = `
 
 function createDocument(document) {
   return MozaikAPI.call({
-    apiEndpoint,
-    accessToken,
     query: createDocumentMutation,
     variables: {
-      document
-    }
+      document,
+    },
   });
 }
 

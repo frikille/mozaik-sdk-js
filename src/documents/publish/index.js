@@ -16,12 +16,10 @@ const publishDocumentMutation = `
 
 function publishDocument(documentId) {
   return MozaikAPI.call({
-    apiEndpoint,
-    accessToken,
     query: publishDocumentMutation,
     variables: {
-      documentId
-    }
+      documentId,
+    },
   });
 }
 

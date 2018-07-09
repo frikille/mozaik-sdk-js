@@ -24,6 +24,7 @@ async function callApi({ apiEndpoint, accessToken, query, variables }) {
 
     return result;
   } catch (error) {
+    // eslint-disable-next-line
     console.error(error.stack);
   }
 }
