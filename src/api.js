@@ -12,12 +12,12 @@ async function callApi({ apiEndpoint, accessToken, query, variables }) {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         query,
-        variables
-      })
+        variables,
+      }),
     });
 
     const result = await response.json();
@@ -34,9 +34,9 @@ const API = {
       query,
       variables,
       apiEndpoint: credentials.API_ENDPOINT,
-      accessToken: credentials.ACCESS_TOKEN
+      accessToken: credentials.ACCESS_TOKEN,
     });
-  }
+  },
 };
 
 module.exports = API;

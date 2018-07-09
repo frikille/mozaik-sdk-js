@@ -1,9 +1,8 @@
-// @flow
-const graphql = require("graphql");
+const graphql = require('graphql');
 const { parse, buildASTSchema } = graphql;
-const fs = require("fs");
-const path = require("path");
-const createContentTypeInput = require("./create-content-type-input.js");
+const fs = require('fs');
+const path = require('path');
+const createContentTypeInput = require('./create-content-type-input.js');
 
 const schema = `
 scalar SingleLineText
@@ -86,7 +85,7 @@ const hashmapContentTypes = [];
 
 parsedSchema.definitions.forEach(definition => {
   typesByName[definition.name.value] = definition;
-  if (definition.kind === "EnumTypeDefinition") {
+  if (definition.kind === 'EnumTypeDefinition') {
     hashmapContentTypes.push(definition);
   }
 });
@@ -105,7 +104,7 @@ const contentTypesToCreate = [
   ...simpleContentTypes.map(c => createContentTypeInput(c)),
   ...singletonContentTypes.map(c => createContentTypeInput(c)),
   ...embaddableContentTypes.map(c => createContentTypeInput(c)),
-  ...hasmapContentTypes.map(c => createContentTypeInput(c))
+  ...hasmapContentTypes.map(c => createContentTypeInput(c)),
 ];
 
 // So hashmapContentTypes, simpleContentTypes, singletonContentTypes, embeddableContentTypes arrays

@@ -18,8 +18,8 @@ function createAsset({ asset }) {
   return MozaikAPI.call({
     query: createAssetMutation,
     variables: {
-      asset
-    }
+      asset,
+    },
   });
 }
 

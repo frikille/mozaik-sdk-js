@@ -1,6 +1,6 @@
-const graphql = require("graphql");
-const fs = require("fs");
-const path = require("path");
+const graphql = require('graphql');
+const fs = require('fs');
+const path = require('path');
 const { parse, print } = graphql;
 
 const query = `

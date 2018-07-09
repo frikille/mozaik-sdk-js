@@ -1,3 +1,3 @@
-export default function createFieldInput(fieldDefinition) {
+module.exports = function createFieldInput(fieldDefinition) {
   return {};
-}
+};

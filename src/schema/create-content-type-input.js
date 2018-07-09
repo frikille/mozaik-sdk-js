@@ -1,23 +1,15 @@
-// @flow
-import createFieldInput from "./create-field-input";
-import type { ObjectTypeDefinitionNode } from "graphql";
+const createFieldInput = require('./create-field-input.js');
 
-type ContentTypeInput = {
-  apiId: string,
-  name: string,
-  fields: Array<FieldInput>
-};
-
-export default function createContentTypeInput(definition): ContentTypeInput {
+module.exports = function createContentTypeInput(definition) {
   const { kind, name, interfaces, directives, fields } = definition;
 
-  if (definition.kind === "ObjectTypeDefinition") {
+  if (definition.kind === 'ObjectTypeDefinition') {
     return {
       name: name.value,
       apiId: name.value,
-      fields: fields.map(f => createFieldInput(f))
+      fields: fields.map(f => createFieldInput(f)),
     };
   }
 
   return {};
-}
+};

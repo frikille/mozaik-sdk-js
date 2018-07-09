@@ -21,8 +21,8 @@ function createField({ field, contentTypeId }) {
     query: createFieldMutation,
     variables: {
       field,
-      contentTypeId
-    }
+      contentTypeId,
+    },
   });
 }
 
