@@ -1,4 +1,15 @@
+// @flow
 const MozaikAPI = require('../../api');
+
+export type FieldInput = {
+  label: string,
+  apiId: string,
+  type: string,
+  contentType?: string,
+  hasMultipleValues?: boolean,
+  position?: number,
+  groupName?: string,
+};
 
 const createFieldMutation = `
   mutation createFieldMutation($contentTypeId: ID! $field: FieldInput!) {
@@ -16,7 +27,12 @@ const createFieldMutation = `
   }
 `;
 
-function createField({ field, contentTypeId }) {
+type Options = {
+  field: FieldInput,
+  contentTypeId: string,
+};
+
+function createField({ field, contentTypeId }: Options) {
   return MozaikAPI.call({
     query: createFieldMutation,
     variables: {

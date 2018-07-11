@@ -14,11 +14,11 @@ scalar DateTime
 
 directive @config(label: String!) on ENUM_VALUE
 
-directive @position(position: Int!) on FIELD_VALUE
-directive @groupName(name: String!) on FIELD_VALUE
-directive @validation(validations: [Validation]) on FIELD_VALUE
+#directive @position(position: Int!) on FIELD_VALUE
+#directive @groupName(name: String!) on FIELD_VALUE
+#directive @validation(validations: [Validation]) on FIELD_VALUE
 
-interface SimpleContenType {
+interface SimpleContentType {
   id: String
   displayName: String
   slug: String
@@ -38,18 +38,18 @@ interface HashmapContentType {
 `;
 
 const userSchema = `
-  type Author implements SimpleContenType {
+  type Author implements SimpleContentType {
     name: SingleLineText
     twitter: SingleLineText
     email: SingleLineText
   }
 
-  type Category implements SimpleContenType {
+  type Category implements SimpleContentType {
     name: String
     subcategories: [Category]
   }
 
-  type Post implements SimpleContenType {
+  type Post implements SimpleContentType {
     title: String
     body: RichText
     author: Author
@@ -77,7 +77,11 @@ const userSchema = `
 const fullSchema = `${schema}\n${userSchema}`;
 
 const parsedSchema = parse(fullSchema);
+
+// fs.writeFileSync('parsedSchema.json', JSON.stringify(parsedSchema, null, ' '));
 const ast = buildASTSchema(parsedSchema);
+
+// fs.writeFileSync('ast.json', JSON.stringify(ast, null, ' '));
 
 const { _typeMap, _implementations } = ast;
 
@@ -91,7 +95,7 @@ parsedSchema.definitions.forEach(definition => {
   }
 });
 
-const simpleContentTypes = (_implementations.SimpleContenType || []).map(
+const simpleContentTypes = (_implementations.SimpleContentType || []).map(
   name => typesByName[name]
 );
 const singletonContentTypes = (_implementations.SingletonContentType || []).map(

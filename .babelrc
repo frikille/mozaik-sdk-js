@@ -1,0 +1,10 @@
+{
+  "env": {
+    "node": {
+      "presets": ["flow"]
+    },
+    "test": {
+      "presets": ["flow"]
+    }
+  }
+}
