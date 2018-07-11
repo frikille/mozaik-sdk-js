@@ -1,24 +1,16 @@
 const createFieldInput = require('./create-field-input');
+const extractContentTypes = require('./extract-content-types.js');
 
 describe('createFieldInput function', () => {
   describe('NamedType', () => {
     it('returns the correct FieldInput object', () => {
-      const input = {
-        kind: 'FieldDefinition',
-        name: {
-          kind: 'Name',
-          value: 'twitter',
-        },
-        type: {
-          kind: 'NamedType',
-          name: {
-            kind: 'Name',
-            value: 'SinglelineText',
-          },
-        },
-        arguments: [],
-        directives: [],
-      };
+      const schema = `
+        type Object implements SimpleContentType {
+          twitter: SinglelineText
+        }
+      `;
+      const { simpleContentTypes } = extractContentTypes(schema);
+      const input = simpleContentTypes[0].fields[0];
 
       const output = {
         label: 'twitter',
@@ -29,51 +21,17 @@ describe('createFieldInput function', () => {
 
       expect(createFieldInput(input)).toEqual(output);
     });
-
-    it('throws an error for an unknown type', () => {
-      const input = {
-        kind: 'FieldDefinition',
-        name: {
-          kind: 'Name',
-          value: 'twitter',
-        },
-        type: {
-          kind: 'NamedType',
-          name: {
-            kind: 'Name',
-            value: 'UnknownType',
-          },
-        },
-        arguments: [],
-        directives: [],
-      };
-      expect(() => createFieldInput(input)).toThrowError(
-        'missing GraphQL type mapping for UnknownType'
-      );
-    });
   });
 
   describe('ListType', () => {
     it('returns the correct FieldInput object', () => {
-      const input = {
-        kind: 'FieldDefinition',
-        name: {
-          kind: 'Name',
-          value: 'tags',
-        },
-        arguments: [],
-        type: {
-          kind: 'ListType',
-          type: {
-            kind: 'NamedType',
-            name: {
-              kind: 'Name',
-              value: 'SinglelineText',
-            },
-          },
-        },
-        directives: [],
-      };
+      const schema = `
+        type Object implements SimpleContentType {
+          tags: [SinglelineText]
+        }
+      `;
+      const { simpleContentTypes } = extractContentTypes(schema);
+      const input = simpleContentTypes[0].fields[0];
 
       const output = {
         label: 'tags',
@@ -87,24 +45,14 @@ describe('createFieldInput function', () => {
   });
   describe('NonNullType', () => {
     it('throws an error', () => {
-      const input = {
-        kind: 'FieldDefinition',
-        name: {
-          kind: 'Name',
-          value: 'twitter',
-        },
-        type: {
-          kind: 'NonNullType',
-          type: {
-            name: {
-              kind: 'Name',
-              value: 'SinglelineText',
-            },
-          },
-        },
-        arguments: [],
-        directives: [],
-      };
+      const schema = `
+        type Object implements SimpleContentType {
+          mandatoryField: String!
+        }
+      `;
+      const { simpleContentTypes } = extractContentTypes(schema);
+      const input = simpleContentTypes[0].fields[0];
+
       expect(() => createFieldInput(input)).toThrowError(
         'non-null type fields are not supported'
       );
