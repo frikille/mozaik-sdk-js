@@ -1,47 +1,8 @@
 /* eslint no-unused-vars: 0, no-undef: 0 */
-const graphql = require('graphql');
-const { parse, buildASTSchema } = graphql;
-const fs = require('fs');
-const path = require('path');
 const createContentTypeInput = require('./create-content-type-input.js');
+const extractContentTypes = require('./extract-content-types.js');
 
 const schema = `
-scalar SinglelineText
-scalar MultilineText
-scalar RichText
-scalar Date
-scalar DateTime
-scalar Audio
-scalar File
-scalar Image
-scalar Video
-
-directive @config(label: String!) on ENUM_VALUE
-
-#directive @position(position: Int!) on FIELD_VALUE
-#directive @groupName(name: String!) on FIELD_VALUE
-#directive @validation(validations: [Validation]) on FIELD_VALUE
-
-interface SimpleContentType {
-  id: String
-  displayName: String
-  slug: String
-}
-
-interface SingletonContentType {
-  id: String
-}
-
-interface EmbeddableContentType {
-  id: String
-}
-
-interface HashmapContentType {
-  id: String
-}
-`;
-
-const userSchema = `
   type Author implements SimpleContentType {
     name: SinglelineText
     twitter: SinglelineText
@@ -78,42 +39,18 @@ const userSchema = `
   }
 `;
 
-const fullSchema = `${schema}\n${userSchema}`;
-
-const parsedSchema = parse(fullSchema);
-
-// fs.writeFileSync('parsedSchema.json', JSON.stringify(parsedSchema, null, ' '));
-const ast = buildASTSchema(parsedSchema);
-
-// fs.writeFileSync('ast.json', JSON.stringify(ast, null, ' '));
-
-const { _typeMap, _implementations } = ast;
-
-const typesByName = {};
-const hashmapContentTypes = [];
-
-parsedSchema.definitions.forEach(definition => {
-  typesByName[definition.name.value] = definition;
-  if (definition.kind === 'EnumTypeDefinition') {
-    hashmapContentTypes.push(definition);
-  }
-});
-
-const simpleContentTypes = (_implementations.SimpleContentType || []).map(
-  name => typesByName[name]
-);
-const singletonContentTypes = (_implementations.SingletonContentType || []).map(
-  name => typesByName[name]
-);
-const embeddableContentTypes = (
-  _implementations.EmbeddableContentType || []
-).map(name => typesByName[name]);
+const {
+  simpleContentTypes,
+  singletonContentTypes,
+  embaddableContentTypes,
+  hashmapContentTypes,
+} = extractContentTypes(schema);
 
 const contentTypesToCreate = [
   ...simpleContentTypes.map(c => createContentTypeInput(c)),
   ...singletonContentTypes.map(c => createContentTypeInput(c)),
   ...embaddableContentTypes.map(c => createContentTypeInput(c)),
-  ...hasmapContentTypes.map(c => createContentTypeInput(c)),
+  ...hashmapContentTypes.map(c => createContentTypeInput(c)),
 ];
 
 // So hashmapContentTypes, simpleContentTypes, singletonContentTypes, embeddableContentTypes arrays
