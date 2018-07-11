@@ -160,4 +160,32 @@ describe('createContentTypeInput function', () => {
   it('returns the correct ContentTypeInput object for SimpleContentType', () => {
     expect(createContentTypeInput(input)).toEqual(output);
   });
+
+  it('uses underscore for multipart camel case names', () => {
+    const input = {
+      kind: 'ObjectTypeDefinition',
+      name: {
+        kind: 'Name',
+        value: 'FeaturedImageThumbnail',
+      },
+      interfaces: [
+        {
+          kind: 'NamedType',
+          name: {
+            kind: 'Name',
+            value: 'SimpleContentType',
+          },
+        },
+      ],
+      fields: [],
+    };
+
+    const output = {
+      apiId: 'FEATURED_IMAGE_THUMBNAIL',
+      name: 'FeaturedImageThumbnail',
+      fields: [],
+    };
+
+    expect(createContentTypeInput(input)).toEqual(output);
+  });
 });
