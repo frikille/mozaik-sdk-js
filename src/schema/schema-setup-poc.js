@@ -11,6 +11,10 @@ scalar MultilineText
 scalar RichText
 scalar Date
 scalar DateTime
+scalar Audio
+scalar File
+scalar Image
+scalar Video
 
 directive @config(label: String!) on ENUM_VALUE
 
