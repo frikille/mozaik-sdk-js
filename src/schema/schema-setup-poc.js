@@ -6,7 +6,7 @@ const path = require('path');
 const createContentTypeInput = require('./create-content-type-input.js');
 
 const schema = `
-scalar SingleLineText
+scalar SinglelineText
 scalar MultilineText
 scalar RichText
 scalar Date
@@ -39,9 +39,9 @@ interface HashmapContentType {
 
 const userSchema = `
   type Author implements SimpleContentType {
-    name: SingleLineText
-    twitter: SingleLineText
-    email: SingleLineText
+    name: SinglelineText
+    twitter: SinglelineText
+    email: SinglelineText
   }
 
   type Category implements SimpleContentType {

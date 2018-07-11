@@ -44,7 +44,7 @@ const input = {
         kind: 'NamedType',
         name: {
           kind: 'Name',
-          value: 'SingleLineText',
+          value: 'SinglelineText',
           loc: {
             start: 591,
             end: 605,
@@ -76,7 +76,7 @@ const input = {
         kind: 'NamedType',
         name: {
           kind: 'Name',
-          value: 'SingleLineText',
+          value: 'SinglelineText',
           loc: {
             start: 619,
             end: 633,
@@ -108,7 +108,7 @@ const input = {
         kind: 'NamedType',
         name: {
           kind: 'Name',
-          value: 'SingleLineText',
+          value: 'SinglelineText',
           loc: {
             start: 645,
             end: 659,
