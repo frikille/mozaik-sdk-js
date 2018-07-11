@@ -135,10 +135,29 @@ const input = {
 const output = {
   apiId: 'AUTHOR',
   name: 'Author',
-  fields: [],
+  fields: [
+    {
+      apiId: 'name',
+      label: 'name',
+      type: 'TEXT_SINGLELINE',
+      hasMultipleValues: false,
+    },
+    {
+      apiId: 'twitter',
+      label: 'twitter',
+      type: 'TEXT_SINGLELINE',
+      hasMultipleValues: false,
+    },
+    {
+      apiId: 'email',
+      label: 'email',
+      type: 'TEXT_SINGLELINE',
+      hasMultipleValues: false,
+    },
+  ],
 };
 describe('createContentTypeInput function', () => {
-  it('return the corrent ContentTypeInput object for SimpleContentType', () => {
+  it('returns the correct ContentTypeInput object for SimpleContentType', () => {
     expect(createContentTypeInput(input)).toEqual(output);
   });
 });

@@ -11,7 +11,7 @@ module.exports = function createContentTypeInput(
 
   return {
     name: name.value,
-    apiId: name.value,
+    apiId: name.value.toUpperCase(),
     fields: (fields || []).map(f => createFieldInput(f)),
   };
 };
