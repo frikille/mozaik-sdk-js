@@ -15,7 +15,7 @@ const input = {
       kind: 'NamedType',
       name: {
         kind: 'Name',
-        value: 'SimpleContenType',
+        value: 'SimpleContentType',
         loc: {
           start: 562,
           end: 578,
