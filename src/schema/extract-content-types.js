@@ -3,7 +3,7 @@ const { parse, buildASTSchema } = graphql;
 const baseSchema = require('./base-schema.js');
 
 module.exports = function extractContentTypes(schema) {
-  const fullSchema = `${baseSchema}\n${schema}`;
+  const fullSchema = `${schema}\n${baseSchema}`;
 
   const parsedSchema = parse(fullSchema);
 
