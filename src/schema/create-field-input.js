@@ -51,9 +51,11 @@ module.exports = function createFieldInput(
 
   const graphqlType = getFieldType(type);
 
-  const mozaikType = typeMapping[graphqlType.type];
+  let mozaikType = typeMapping[graphqlType.type];
   if (!mozaikType) {
-    throw new Error(`missing GraphQL type mapping for ${graphqlType.type}`);
+    mozaikType = graphqlType.type
+      .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
+      .toUpperCase();
   }
 
   return {
