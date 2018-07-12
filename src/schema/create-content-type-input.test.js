@@ -238,7 +238,7 @@ describe('createContentTypeInput function', () => {
       const input = hashmapContentTypes[0];
       expect(() => createContentTypeInput(input)).toThrow({
         message: 'label can not be empty',
-        locations: [{ line: 3, column: 24 }],
+        locations: [{ line: 3, column: 31 }],
       });
     });
 
@@ -251,7 +251,7 @@ describe('createContentTypeInput function', () => {
       const { hashmapContentTypes } = parse(schema);
       const input = hashmapContentTypes[0];
       expect(() => createContentTypeInput(input)).toThrow({
-        message: 'was expecting string value',
+        message: 'was expecting String',
         locations: [{ line: 3, column: 31 }],
       });
     });

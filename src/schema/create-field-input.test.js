@@ -68,6 +68,23 @@ describe('createFieldInput function', () => {
     });
   });
 
+  describe('NonNullType', () => {
+    it('throws an error', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          mandatoryField: String!
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'non-null fields are not supported',
+        locations: [{ line: 3, column: 27 }],
+      });
+    });
+  });
+
   it('converts the user type to an uppercased name', () => {
     const schema = `
       type FeaturedPost implements SimpleContentType {
@@ -92,19 +109,91 @@ describe('createFieldInput function', () => {
     expect(createFieldInput(input)).toEqual(output);
   });
 
-  describe('NonNullType', () => {
-    it('throws an error', () => {
+  describe('Field with position', () => {
+    it('correctly parses the position', () => {
       const schema = `
         type Object implements SimpleContentType {
-          mandatoryField: String!
+          field1: SinglelineText @position(position: 2)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'field1',
+        apiId: 'field1',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        position: 2,
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
+    });
+
+    it('throws an error if position is not a number', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field1: SinglelineText @position(position: "not a number")
         }
       `;
       const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0].fields[0];
 
       expect(() => createFieldInput(input)).toThrow({
-        message: 'non-null fields are not supported',
-        locations: [{ line: 3, column: 27 }],
+        message: 'was expecting Int',
+        locations: [{ line: 3, column: 54 }],
+      });
+    });
+
+    it('throws an error if position is negative', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field1: SinglelineText @position(position: -1)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'position should be non-negative',
+        locations: [{ line: 3, column: 54 }],
+      });
+    });
+  });
+
+  describe('Field with group name', () => {
+    it('correctly parses the group name', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field1: SinglelineText @group(name: "foo")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'field1',
+        apiId: 'field1',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        groupName: 'foo',
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
+    });
+
+    it('throws an error if group name is empty', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          twitter: SinglelineText @group(name: "")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'group name can not be empty',
+        locations: [{ line: 3, column: 48 }],
       });
     });
   });

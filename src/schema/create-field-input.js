@@ -1,7 +1,8 @@
 // @flow
 import type { FieldDefinitionNode } from 'graphql/language/ast';
 import type { FieldInput } from '../fields/create/index.js';
-const { GraphQLError } = require('graphql');
+const { GraphQLError, GraphQLInt, GraphQLString } = require('graphql');
+const getDirectiveValue = require('./get-directive-value.js');
 
 const typeMapping = {
   String: 'TEXT_SINGLELINE',
@@ -47,7 +48,7 @@ function getFieldType(type): FieldOptions {
 module.exports = function createFieldInput(
   definition: FieldDefinitionNode
 ): FieldInput {
-  const { type, name } = definition;
+  const { type, name, directives = [] } = definition;
 
   const graphqlType = getFieldType(type);
 
@@ -58,12 +59,45 @@ module.exports = function createFieldInput(
       .toUpperCase();
   }
 
-  return {
+  const input: FieldInput = {
     label: name.value,
     apiId: name.value,
     type: mozaikType,
     hasMultipleValues: graphqlType.hasMultipleValues,
-    //position?: number,
     //groupName?: string,
   };
+
+  const position = getDirectiveValue(
+    directives || [],
+    'position',
+    'position',
+    GraphQLInt,
+    v => {
+      if (Number(v) < 0) {
+        throw new GraphQLError('position should be non-negative');
+      }
+    }
+  );
+
+  if (typeof position !== 'undefined') {
+    input.position = Number(position);
+  }
+
+  const groupName = getDirectiveValue(
+    directives || [],
+    'group',
+    'name',
+    GraphQLString,
+    v => {
+      if (v === '') {
+        throw new GraphQLError('group name can not be empty');
+      }
+    }
+  );
+
+  if (groupName) {
+    input.groupName = String(groupName);
+  }
+
+  return input;
 };
