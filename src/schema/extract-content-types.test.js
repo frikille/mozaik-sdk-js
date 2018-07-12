@@ -1,7 +1,8 @@
 const extractContentTypes = require('./extract-content-types.js');
+const createContentTypeInput = require('./create-content-type-input');
 
 describe('the extractContentTypes method', () => {
-  it('parses the schema correctly', () => {
+  it('parses the schema correctly and all content types can be processed', () => {
     const schema = `
       type Author implements SimpleContentType {
         name: SinglelineText
@@ -38,5 +39,30 @@ describe('the extractContentTypes method', () => {
         highlightedPost: [Post]
       }
     `;
+
+    const {
+      simpleContentTypes,
+      singletonContentTypes,
+      embeddableContentTypes,
+      hashmapContentTypes,
+    } = extractContentTypes(schema);
+
+    expect(simpleContentTypes).toHaveLength(3);
+
+    simpleContentTypes.forEach(ct => {
+      createContentTypeInput(ct);
+    });
+
+    singletonContentTypes.forEach(ct => {
+      createContentTypeInput(ct);
+    });
+
+    embeddableContentTypes.forEach(ct => {
+      createContentTypeInput(ct);
+    });
+
+    hashmapContentTypes.forEach(ct => {
+      createContentTypeInput(ct);
+    });
   });
 });
