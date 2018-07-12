@@ -12,7 +12,7 @@ scalar Video
 directive @config(label: String!) on ENUM_VALUE
 
 #directive @position(position: Int!) on FIELD_VALUE
-#directive @groupName(name: String!) on FIELD_VALUE
+#directive @group(name: String!) on FIELD_VALUE
 #directive @validation(validations: [Validation]) on FIELD_VALUE
 
 interface SimpleContentType {
