@@ -178,7 +178,7 @@ describe('createContentTypeInput function', () => {
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
     });
 
-    it('throws an error if @config is missing', () => {
+    it('uses enum key as value if @config is not set', () => {
       const schema = `
         enum Color {
           blue
@@ -186,24 +186,46 @@ describe('createContentTypeInput function', () => {
       `;
       const { hashmapContentTypes } = extractContentTypes(schema);
       const input = hashmapContentTypes[0];
-      expect(() => createContentTypeInput(input)).toThrow({
-        message: '@config must be set',
-        locations: [{ line: 3, column: 11 }],
-      });
+
+      const output = {
+        apiId: 'COLOR',
+        name: 'Color',
+        enumValues: [
+          {
+            key: 'blue',
+            value: 'blue',
+          },
+        ],
+        isEnum: true,
+        isHashmap: true,
+      };
+
+      expect(createContentTypeInput(input)).toEqual(output);
     });
 
-    it('throws an error if @config does not have a label argument', () => {
+    it('uses enum key as value if label is not set under @config', () => {
       const schema = `
         enum Color {
-          blue @config(notLable: "Value 1")
+          blue @config
         }
       `;
       const { hashmapContentTypes } = extractContentTypes(schema);
       const input = hashmapContentTypes[0];
-      expect(() => createContentTypeInput(input)).toThrow({
-        message: 'argument @label must be set',
-        locations: [{ line: 3, column: 16 }],
-      });
+
+      const output = {
+        apiId: 'COLOR',
+        name: 'Color',
+        enumValues: [
+          {
+            key: 'blue',
+            value: 'blue',
+          },
+        ],
+        isEnum: true,
+        isHashmap: true,
+      };
+
+      expect(createContentTypeInput(input)).toEqual(output);
     });
 
     it('throws an error if label is empty', () => {

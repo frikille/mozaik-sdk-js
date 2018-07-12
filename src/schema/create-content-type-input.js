@@ -51,7 +51,9 @@ function createContentTypeInputFromEnum(
       try {
         return {
           key: v.name.value,
-          value: getDirectiveValue(v.directives || [], 'config', 'label'),
+          value:
+            getDirectiveValue(v.directives || [], 'config', 'label') ||
+            v.name.value,
         };
       } catch (err) {
         if (err instanceof GraphQLError) {
@@ -67,10 +69,10 @@ function getDirectiveValue(
   directives: $ReadOnlyArray<DirectiveNode>,
   name: string,
   argName: string
-) {
+): string {
   const validDirectives = directives.filter(d => d.name.value === name) || [];
   if (validDirectives.length === 0) {
-    throw new Error(`@${name} must be set`);
+    return '';
   }
 
   try {
@@ -89,7 +91,7 @@ function getArgumentValue(
 ): string {
   const validArgs = args.filter(a => a.name.value === name);
   if (validArgs.length === 0) {
-    throw new Error(`argument @${name} must be set`);
+    return '';
   }
   const value = getStringNodeValue(validArgs[0].value);
   if (!value) {
