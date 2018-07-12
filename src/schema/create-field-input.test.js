@@ -53,9 +53,10 @@ describe('createFieldInput function', () => {
       const { simpleContentTypes } = extractContentTypes(schema);
       const input = simpleContentTypes[0].fields[0];
 
-      expect(() => createFieldInput(input)).toThrowError(
-        'non-null type fields are not supported'
-      );
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'non-null fields are not supported',
+        locations: [{ line: 3, column: 27 }],
+      });
     });
   });
 });

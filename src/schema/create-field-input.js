@@ -1,6 +1,7 @@
 // @flow
 import type { FieldDefinitionNode } from 'graphql/language/ast';
 import type { FieldInput } from '../fields/create/index.js';
+const { GraphQLError } = require('graphql');
 
 const typeMapping = {
   String: 'TEXT_SINGLELINE',
@@ -37,9 +38,9 @@ function getFieldType(type): FieldOptions {
         hasMultipleValues: true,
       };
     case 'NonNullType':
-      throw new Error('non-null type fields are not supported');
+      throw new GraphQLError('non-null fields are not supported', type);
     default:
-      throw new Error(`unknown field type: ${type.kind}`);
+      throw new GraphQLError(`unknown field type: ${type.kind}`, type);
   }
 }
 
