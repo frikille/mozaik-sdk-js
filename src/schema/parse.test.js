@@ -1,7 +1,7 @@
-const extractContentTypes = require('./extract-content-types.js');
+const parse = require('./parse.js');
 const createContentTypeInput = require('./create-content-type-input');
 
-describe('the extractContentTypes method', () => {
+describe('the parse method', () => {
   it('parses the schema correctly and all content types can be processed', () => {
     const schema = `
       type Author implements SimpleContentType {
@@ -45,7 +45,7 @@ describe('the extractContentTypes method', () => {
       singletonContentTypes,
       embeddableContentTypes,
       hashmapContentTypes,
-    } = extractContentTypes(schema);
+    } = parse(schema);
 
     expect(simpleContentTypes).toHaveLength(3);
 

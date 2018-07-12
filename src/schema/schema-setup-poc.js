@@ -1,6 +1,6 @@
 /* eslint no-unused-vars: 0, no-undef: 0 */
 const createContentTypeInput = require('./create-content-type-input.js');
-const extractContentTypes = require('./extract-content-types.js');
+const parse = require('./parse.js');
 
 const schema = `
   type Author implements SimpleContentType {
@@ -44,7 +44,7 @@ const {
   singletonContentTypes,
   embaddableContentTypes,
   hashmapContentTypes,
-} = extractContentTypes(schema);
+} = parse(schema);
 
 const contentTypesToCreate = [
   ...simpleContentTypes.map(c => createContentTypeInput(c)),

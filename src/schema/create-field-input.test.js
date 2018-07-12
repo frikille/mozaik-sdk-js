@@ -1,5 +1,5 @@
 const createFieldInput = require('./create-field-input');
-const extractContentTypes = require('./extract-content-types.js');
+const parse = require('./parse.js');
 
 describe('createFieldInput function', () => {
   describe('NamedType', () => {
@@ -9,7 +9,7 @@ describe('createFieldInput function', () => {
           twitter: SinglelineText
         }
       `;
-      const { simpleContentTypes } = extractContentTypes(schema);
+      const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
@@ -33,7 +33,7 @@ describe('createFieldInput function', () => {
           content: String
         }
       `;
-      const { simpleContentTypes } = extractContentTypes(schema);
+      const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[1].fields[0];
 
       const output = {
@@ -54,7 +54,7 @@ describe('createFieldInput function', () => {
           tags: [SinglelineText]
         }
       `;
-      const { simpleContentTypes } = extractContentTypes(schema);
+      const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
@@ -79,7 +79,7 @@ describe('createFieldInput function', () => {
         content: String
       }
     `;
-    const { simpleContentTypes } = extractContentTypes(schema);
+    const { simpleContentTypes } = parse(schema);
     const input = simpleContentTypes[0].fields[1];
 
     const output = {
@@ -99,7 +99,7 @@ describe('createFieldInput function', () => {
           mandatoryField: String!
         }
       `;
-      const { simpleContentTypes } = extractContentTypes(schema);
+      const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0].fields[0];
 
       expect(() => createFieldInput(input)).toThrow({

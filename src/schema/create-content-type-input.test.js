@@ -1,5 +1,5 @@
 const createContentTypeInput = require('./create-content-type-input');
-const extractContentTypes = require('./extract-content-types.js');
+const parse = require('./parse.js');
 
 describe('createContentTypeInput function', () => {
   describe('SimpleContentType', () => {
@@ -11,7 +11,7 @@ describe('createContentTypeInput function', () => {
           email: SinglelineText
         }
       `;
-      const { simpleContentTypes } = extractContentTypes(schema);
+      const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0];
 
       const output = {
@@ -48,7 +48,7 @@ describe('createContentTypeInput function', () => {
           field1: String
         }
         `;
-      const { simpleContentTypes } = extractContentTypes(schema);
+      const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0];
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
@@ -62,7 +62,7 @@ describe('createContentTypeInput function', () => {
           title: String
         }
       `;
-      const { singletonContentTypes } = extractContentTypes(schema);
+      const { singletonContentTypes } = parse(schema);
       const input = singletonContentTypes[0];
 
       const output = {
@@ -88,7 +88,7 @@ describe('createContentTypeInput function', () => {
             field1: String
           }
         `;
-      const { singletonContentTypes } = extractContentTypes(schema);
+      const { singletonContentTypes } = parse(schema);
       const input = singletonContentTypes[0];
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
@@ -102,7 +102,7 @@ describe('createContentTypeInput function', () => {
           url: String
         }
       `;
-      const { embeddableContentTypes } = extractContentTypes(schema);
+      const { embeddableContentTypes } = parse(schema);
       const input = embeddableContentTypes[0];
 
       const output = {
@@ -128,7 +128,7 @@ describe('createContentTypeInput function', () => {
             field1: String
           }
         `;
-      const { embeddableContentTypes } = extractContentTypes(schema);
+      const { embeddableContentTypes } = parse(schema);
       const input = embeddableContentTypes[0];
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
@@ -143,7 +143,7 @@ describe('createContentTypeInput function', () => {
           lightRed @config(label: "Light red")
         }
       `;
-      const { hashmapContentTypes } = extractContentTypes(schema);
+      const { hashmapContentTypes } = parse(schema);
       const input = hashmapContentTypes[0];
 
       const output = {
@@ -172,7 +172,7 @@ describe('createContentTypeInput function', () => {
           value1 @config(label: "Value 1")
         }
       `;
-      const { hashmapContentTypes } = extractContentTypes(schema);
+      const { hashmapContentTypes } = parse(schema);
       const input = hashmapContentTypes[0];
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
@@ -184,7 +184,7 @@ describe('createContentTypeInput function', () => {
           blue
         }
       `;
-      const { hashmapContentTypes } = extractContentTypes(schema);
+      const { hashmapContentTypes } = parse(schema);
       const input = hashmapContentTypes[0];
 
       const output = {
@@ -209,7 +209,7 @@ describe('createContentTypeInput function', () => {
           blue @config
         }
       `;
-      const { hashmapContentTypes } = extractContentTypes(schema);
+      const { hashmapContentTypes } = parse(schema);
       const input = hashmapContentTypes[0];
 
       const output = {
@@ -234,7 +234,7 @@ describe('createContentTypeInput function', () => {
           blue @config(label: "")
         }
       `;
-      const { hashmapContentTypes } = extractContentTypes(schema);
+      const { hashmapContentTypes } = parse(schema);
       const input = hashmapContentTypes[0];
       expect(() => createContentTypeInput(input)).toThrow({
         message: 'label can not be empty',
@@ -248,7 +248,7 @@ describe('createContentTypeInput function', () => {
           blue @config(label: 123)
         }
       `;
-      const { hashmapContentTypes } = extractContentTypes(schema);
+      const { hashmapContentTypes } = parse(schema);
       const input = hashmapContentTypes[0];
       expect(() => createContentTypeInput(input)).toThrow({
         message: 'was expecting string value',
