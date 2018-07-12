@@ -152,11 +152,11 @@ describe('createContentTypeInput function', () => {
         enumValues: [
           {
             key: 'blue',
-            value: 'blue',
+            value: 'Blue',
           },
           {
             key: 'lightRed',
-            value: 'lightRed',
+            value: 'Light red',
           },
         ],
         isEnum: true,
@@ -176,6 +176,62 @@ describe('createContentTypeInput function', () => {
       const input = hashmapContentTypes[0];
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
+    });
+
+    it('throws an error if @config is missing', () => {
+      const schema = `
+        enum Color {
+          blue
+        }
+      `;
+      const { hashmapContentTypes } = extractContentTypes(schema);
+      const input = hashmapContentTypes[0];
+      expect(() => createContentTypeInput(input)).toThrow({
+        message: '@config must be set',
+        locations: [{ line: 3, column: 11 }],
+      });
+    });
+
+    it('throws an error if @config does not have a label argument', () => {
+      const schema = `
+        enum Color {
+          blue @config(notLable: "Value 1")
+        }
+      `;
+      const { hashmapContentTypes } = extractContentTypes(schema);
+      const input = hashmapContentTypes[0];
+      expect(() => createContentTypeInput(input)).toThrow({
+        message: 'argument @label must be set',
+        locations: [{ line: 3, column: 16 }],
+      });
+    });
+
+    it('throws an error if label is empty', () => {
+      const schema = `
+        enum Color {
+          blue @config(label: "")
+        }
+      `;
+      const { hashmapContentTypes } = extractContentTypes(schema);
+      const input = hashmapContentTypes[0];
+      expect(() => createContentTypeInput(input)).toThrow({
+        message: 'label can not be empty',
+        locations: [{ line: 3, column: 24 }],
+      });
+    });
+
+    it('throws an error if label is not a string', () => {
+      const schema = `
+        enum Color {
+          blue @config(label: 123)
+        }
+      `;
+      const { hashmapContentTypes } = extractContentTypes(schema);
+      const input = hashmapContentTypes[0];
+      expect(() => createContentTypeInput(input)).toThrow({
+        message: 'was expecting string value',
+        locations: [{ line: 3, column: 31 }],
+      });
     });
   });
 });
