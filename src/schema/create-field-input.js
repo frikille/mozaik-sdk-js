@@ -1,7 +1,7 @@
 // @flow
 import type { FieldDefinitionNode } from 'graphql/language/ast';
 import type { FieldInput } from '../fields/create/index.js';
-const { GraphQLError, GraphQLInt, GraphQLString } = require('graphql');
+const { GraphQLError, GraphQLString } = require('graphql');
 const getDirectiveValue = require('./get-directive-value.js');
 
 const typeMapping = {
@@ -66,22 +66,6 @@ module.exports = function createFieldInput(
     hasMultipleValues: graphqlType.hasMultipleValues,
     //groupName?: string,
   };
-
-  const position = getDirectiveValue(
-    directives || [],
-    'position',
-    'position',
-    GraphQLInt,
-    v => {
-      if (Number(v) < 0) {
-        throw new GraphQLError('position should be non-negative');
-      }
-    }
-  );
-
-  if (typeof position !== 'undefined') {
-    input.position = Number(position);
-  }
 
   const groupName = getDirectiveValue(
     directives || [],

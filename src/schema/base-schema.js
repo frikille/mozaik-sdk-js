@@ -11,7 +11,6 @@ scalar Video
 
 directive @config(label: String!) on ENUM_VALUE
 
-directive @position(position: Int!) on FIELD_DEFINITION
 directive @group(name: String!) on FIELD_DEFINITION
 #directive @validation(validations: [Validation]) on FIELD_DEFINITION
 

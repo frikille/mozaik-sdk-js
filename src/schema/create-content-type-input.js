@@ -13,12 +13,17 @@ function createContentTypeInputFromObject(
 ): ContentTypeInput {
   const { name, interfaces = [], fields = [] } = definition;
 
+  let position = 1;
   const contentTypeInput: ContentTypeInput = {
     name: name.value,
     apiId: name.value
       .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
       .toUpperCase(),
-    fields: fields.map(f => createFieldInput(f)),
+    fields: fields.map(f => {
+      const field = createFieldInput(f);
+      field.position = position++;
+      return field;
+    }),
   };
 
   switch (interfaces[0].name.value) {

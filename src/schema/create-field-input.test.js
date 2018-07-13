@@ -109,58 +109,6 @@ describe('createFieldInput function', () => {
     expect(createFieldInput(input)).toEqual(output);
   });
 
-  describe('Field with position', () => {
-    it('correctly parses the position', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          field1: SinglelineText @position(position: 2)
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      const output = {
-        label: 'field1',
-        apiId: 'field1',
-        type: 'TEXT_SINGLELINE',
-        hasMultipleValues: false,
-        position: 2,
-      };
-
-      expect(createFieldInput(input)).toEqual(output);
-    });
-
-    it('throws an error if position is not a number', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          field1: SinglelineText @position(position: "not a number")
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      expect(() => createFieldInput(input)).toThrow({
-        message: 'was expecting Int',
-        locations: [{ line: 3, column: 54 }],
-      });
-    });
-
-    it('throws an error if position is negative', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          field1: SinglelineText @position(position: -1)
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      expect(() => createFieldInput(input)).toThrow({
-        message: 'position should be non-negative',
-        locations: [{ line: 3, column: 54 }],
-      });
-    });
-  });
-
   describe('Field with group name', () => {
     it('correctly parses the group name', () => {
       const schema = `
