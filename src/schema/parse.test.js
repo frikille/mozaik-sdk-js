@@ -48,19 +48,21 @@ describe('the parse method', () => {
     } = parse(schema);
 
     expect(simpleContentTypes).toHaveLength(3);
-
     simpleContentTypes.forEach(ct => {
       createContentTypeInput(ct);
     });
 
+    expect(singletonContentTypes).toHaveLength(1);
     singletonContentTypes.forEach(ct => {
       createContentTypeInput(ct);
     });
 
+    expect(embeddableContentTypes).toHaveLength(1);
     embeddableContentTypes.forEach(ct => {
       createContentTypeInput(ct);
     });
 
+    expect(hashmapContentTypes).toHaveLength(1);
     hashmapContentTypes.forEach(ct => {
       createContentTypeInput(ct);
     });
