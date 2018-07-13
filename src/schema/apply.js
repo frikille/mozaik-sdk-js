@@ -23,8 +23,6 @@ async function createContentTypes(
         contentType: contentTypeWithoutFields,
       });
 
-      console.log(apiResult);
-
       // checking GraphQL errors
       let errors = apiResult.errors;
       if (errors && errors.length > 0) {
