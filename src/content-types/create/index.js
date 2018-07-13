@@ -39,6 +39,7 @@ async function createContentType({ contentType }: Options) {
     variables: {
       contentType,
     },
+    operationName: 'createContentType',
   });
 }
 
