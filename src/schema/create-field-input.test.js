@@ -145,4 +145,21 @@ describe('createFieldInput function', () => {
       });
     });
   });
+
+  describe('Field with reserved name', () => {
+    it('throws an error', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          id: SinglelineText
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'id is a reserved field name',
+        locations: [{ line: 3, column: 11 }],
+      });
+    });
+  });
 });

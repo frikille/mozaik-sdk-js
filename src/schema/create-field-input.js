@@ -21,6 +21,25 @@ const typeMapping = {
   Video: 'VIDEO',
 };
 
+const reservedFieldNames = [
+  'id',
+  'slug',
+  'contentType',
+  'displayName',
+  'currentVersion',
+  'createdAt',
+  'updatedAt',
+  'project',
+  'author',
+  'status',
+  'content',
+  'liveVersionId',
+  'latestVersionId',
+  'lockId',
+  'firstPublishDate',
+  'latestPublishDate',
+];
+
 type FieldOptions = {
   type: string,
   hasMultipleValues: boolean,
@@ -66,6 +85,13 @@ module.exports = function createFieldInput(
     hasMultipleValues: graphqlType.hasMultipleValues,
   };
 
+  if (reservedFieldNames.includes(input.apiId)) {
+    throw new GraphQLError(
+      `${input.apiId} is a reserved field name`,
+      definition
+    );
+  }
+
   const groupName = getDirectiveValue(
     directives || [],
     'config',
@@ -73,7 +99,7 @@ module.exports = function createFieldInput(
     GraphQLString,
     v => {
       if (v === '') {
-        throw new GraphQLError('group name can not be empty');
+        throw new Error('group name can not be empty');
       }
     }
   );
