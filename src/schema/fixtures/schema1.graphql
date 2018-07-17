@@ -1,7 +1,7 @@
 type Author implements SimpleContentType {
-  name: SinglelineText @group(name: "personal")
-  email: SinglelineText @group(name: "personal")
-  twitter: SinglelineText @group(name: "social")
+  name: SinglelineText @config(groupName: "personal")
+  email: SinglelineText @config(groupName: "personal")
+  twitter: SinglelineText @config(groupName: "social")
 }
 
 type Category implements SimpleContentType {
@@ -12,7 +12,7 @@ type Category implements SimpleContentType {
 type Post implements SimpleContentType {
   title: String
   body: RichText
-  author: Author
+  postAuthor: Author
   featuredImage: FeaturedImage
   categories: [Category]
 }
