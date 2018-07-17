@@ -21,6 +21,25 @@ const typeMapping = {
   Video: 'VIDEO',
 };
 
+const reservedFieldNames = [
+  'id',
+  'slug',
+  'contentType',
+  'displayName',
+  'currentVersion',
+  'createdAt',
+  'updatedAt',
+  'project',
+  'author',
+  'status',
+  'content',
+  'liveVersionId',
+  'latestVersionId',
+  'lockId',
+  'firstPublishDate',
+  'latestPublishDate',
+];
+
 type FieldOptions = {
   type: string,
   hasMultipleValues: boolean,
@@ -65,6 +84,13 @@ module.exports = function createFieldInput(
     type: mozaikType,
     hasMultipleValues: graphqlType.hasMultipleValues,
   };
+
+  if (reservedFieldNames.includes(input.apiId)) {
+    throw new GraphQLError(
+      `${input.apiId} is a reserved field name`,
+      definition
+    );
+  }
 
   const groupName = getDirectiveValue(
     directives || [],

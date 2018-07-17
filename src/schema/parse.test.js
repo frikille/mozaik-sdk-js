@@ -18,7 +18,7 @@ describe('the parse method', () => {
       type Post implements SimpleContentType {
         title: String
         body: RichText
-        author: Author
+        postAuthor: Author
         featuredImage: FeaturedImage
         categories: [Category]
       }
