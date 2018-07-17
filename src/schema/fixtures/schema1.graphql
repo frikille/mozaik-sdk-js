@@ -1,0 +1,34 @@
+type Author implements SimpleContentType {
+  name: SinglelineText @config(groupName: "personal")
+  email: SinglelineText @config(groupName: "personal")
+  twitter: SinglelineText @config(groupName: "social")
+}
+
+type Category implements SimpleContentType {
+  name: String
+  subcategories: [Category]
+}
+
+type Post implements SimpleContentType {
+  title: String
+  body: RichText
+  postAuthor: Author
+  featuredImage: FeaturedImage
+  categories: [Category]
+}
+
+enum ColorEnum {
+  blue @config(label: "Blue")
+  lightRed @config(label: "Light red")
+}
+
+type FeaturedImage implements EmbeddableContentType {
+  url: String
+  title: String
+  background: ColorEnum
+}
+
+type Homepage implements SingletonContentType {
+  title: String
+  highlightedPost: [Post]
+}

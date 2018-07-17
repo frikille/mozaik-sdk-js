@@ -1,7 +1,13 @@
 const fetch = require('node-fetch');
 const credentials = require('./credentials');
 
-async function callApi({ apiEndpoint, accessToken, query, variables }) {
+async function callApi({
+  apiEndpoint,
+  accessToken,
+  query,
+  variables,
+  operationName,
+}) {
   if (!apiEndpoint || !accessToken) {
     throw new Error('API endpoint and accessToken must be set!');
   }
@@ -17,6 +23,7 @@ async function callApi({ apiEndpoint, accessToken, query, variables }) {
       body: JSON.stringify({
         query,
         variables,
+        operationName,
       }),
     });
 
@@ -30,10 +37,11 @@ async function callApi({ apiEndpoint, accessToken, query, variables }) {
 }
 
 const API = {
-  call(query, variables) {
+  call({ query, variables, operationName }) {
     return callApi({
       query,
       variables,
+      operationName,
       apiEndpoint: credentials.API_ENDPOINT,
       accessToken: credentials.ACCESS_TOKEN,
     });

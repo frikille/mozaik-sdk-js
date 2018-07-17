@@ -39,6 +39,7 @@ function createField({ field, contentTypeId }: Options) {
       field,
       contentTypeId,
     },
+    operationName: 'createFieldMutation',
   });
 }
 
