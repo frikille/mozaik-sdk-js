@@ -64,13 +64,12 @@ module.exports = function createFieldInput(
     apiId: name.value,
     type: mozaikType,
     hasMultipleValues: graphqlType.hasMultipleValues,
-    //groupName?: string,
   };
 
   const groupName = getDirectiveValue(
     directives || [],
-    'group',
-    'name',
+    'config',
+    'groupName',
     GraphQLString,
     v => {
       if (v === '') {

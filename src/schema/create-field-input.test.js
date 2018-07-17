@@ -113,7 +113,7 @@ describe('createFieldInput function', () => {
     it('correctly parses the group name', () => {
       const schema = `
         type Object implements SimpleContentType {
-          field1: SinglelineText @group(name: "foo")
+          field1: SinglelineText @config(groupName: "foo")
         }
       `;
       const { simpleContentTypes } = parse(schema);
@@ -133,7 +133,7 @@ describe('createFieldInput function', () => {
     it('throws an error if group name is empty', () => {
       const schema = `
         type Object implements SimpleContentType {
-          twitter: SinglelineText @group(name: "")
+          twitter: SinglelineText @config(groupName: "")
         }
       `;
       const { simpleContentTypes } = parse(schema);
@@ -141,7 +141,7 @@ describe('createFieldInput function', () => {
 
       expect(() => createFieldInput(input)).toThrow({
         message: 'group name can not be empty',
-        locations: [{ line: 3, column: 48 }],
+        locations: [{ line: 3, column: 54 }],
       });
     });
   });
