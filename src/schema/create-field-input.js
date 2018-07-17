@@ -99,7 +99,7 @@ module.exports = function createFieldInput(
     GraphQLString,
     v => {
       if (v === '') {
-        throw new GraphQLError('group name can not be empty');
+        throw new Error('group name can not be empty');
       }
     }
   );
