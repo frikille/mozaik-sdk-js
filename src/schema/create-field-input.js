@@ -64,6 +64,25 @@ function getFieldType(type): FieldOptions {
   }
 }
 
+function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
+  const { directives = [] } = definition;
+  const groupName = getDirectiveValue(
+    directives,
+    'config',
+    'groupName',
+    GraphQLString,
+    v => {
+      if (v === '') {
+        throw new Error('group name can not be empty');
+      }
+    }
+  );
+
+  if (groupName) {
+    input.groupName = String(groupName);
+  }
+}
+
 function setIncludeInDisplayName(
   definition: FieldDefinitionNode,
   input: FieldInput
@@ -97,7 +116,7 @@ function setIncludeInDisplayName(
 module.exports = function createFieldInput(
   definition: FieldDefinitionNode
 ): FieldInput {
-  const { type, name, directives = [] } = definition;
+  const { type, name } = definition;
 
   const graphqlType = getFieldType(type);
 
@@ -122,22 +141,7 @@ module.exports = function createFieldInput(
     );
   }
 
-  const groupName = getDirectiveValue(
-    directives,
-    'config',
-    'groupName',
-    GraphQLString,
-    v => {
-      if (v === '') {
-        throw new Error('group name can not be empty');
-      }
-    }
-  );
-
-  if (groupName) {
-    input.groupName = String(groupName);
-  }
-
+  setGroupName(definition, input);
   setIncludeInDisplayName(definition, input);
 
   return input;
