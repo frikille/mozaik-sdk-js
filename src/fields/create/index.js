@@ -7,6 +7,7 @@ export type FieldInput = {
   type: string,
   contentType?: string,
   hasMultipleValues?: boolean,
+  includeInDisplayName?: boolean,
   position?: number,
   groupName?: string,
 };

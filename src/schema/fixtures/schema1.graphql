@@ -1,16 +1,16 @@
 type Author implements SimpleContentType {
-  name: SinglelineText @config(groupName: "personal")
+  name: SinglelineText @config(groupName: "personal", isTitle: true)
   email: SinglelineText @config(groupName: "personal")
   twitter: SinglelineText @config(groupName: "social")
 }
 
 type Category implements SimpleContentType {
-  name: String
+  name: String @config(isTitle: true)
   subcategories: [Category]
 }
 
 type Post implements SimpleContentType {
-  title: String
+  title: String @config(isTitle: true)
   body: RichText
   postAuthor: Author
   featuredImage: FeaturedImage
@@ -24,11 +24,11 @@ enum ColorEnum {
 
 type FeaturedImage implements EmbeddableContentType {
   url: String
-  title: String
+  title: String @config(isTitle: true)
   background: ColorEnum
 }
 
 type Homepage implements SingletonContentType {
-  title: String
+  title: String @config(isTitle: true)
   highlightedPost: [Post]
 }

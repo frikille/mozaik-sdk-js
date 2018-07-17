@@ -162,4 +162,57 @@ describe('createFieldInput function', () => {
       });
     });
   });
+
+  describe('Field marked as title', () => {
+    it('should set the includeInDisplayName parameter', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myTitle: SinglelineText @config(isTitle: true)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'myTitle',
+        apiId: 'myTitle',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        includeInDisplayName: true,
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
+    });
+
+    it('should throw an error if not boolean', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myTitle: SinglelineText @config(isTitle: "true")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'was expecting Boolean',
+        locations: [{ line: 3, column: 52 }],
+      });
+    });
+
+    it('should throw an error if set on a wrong field type', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myTitle: MultilineText @config(isTitle: true)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message:
+          'isTitle flag is only valid on String, ID, SinglelineText fields',
+        locations: [{ line: 3, column: 20 }],
+      });
+    });
+  });
 });
