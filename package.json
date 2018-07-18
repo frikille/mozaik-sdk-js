@@ -1,6 +1,6 @@
 {
   "name": "mozaik-sdk",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Mozaik SDK for Javascript in Node.js",
   "main": "index.js",
   "repository": "git@github.com:mozaikio/mozaik-sdk-js.git",
