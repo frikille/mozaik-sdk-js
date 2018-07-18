@@ -1,21 +1,24 @@
 {
-  "name": "mozaik-sdk",
+  "name": "@mozaikio/sdk",
   "version": "0.0.1",
   "description": "Mozaik SDK for Javascript in Node.js",
   "main": "index.js",
-  "repository": "git@github.com:mozaikio/mozaik-sdk-js.git",
   "author": {
     "name": "Mozaik.io",
     "email": "hello@mozaik.io",
     "url": "https://www.mozaik.io/"
   },
   "scripts": {
-    "prebuild": "rm -rf lib",
-    "build": "flow-remove-types src/ -d lib/",
+    "prebuild": "rm -rf ./lib && mkdir ./lib",
+    "build": "npm run build:src && npm run build:package-json",
+    "build:src": "flow-remove-types ./src -d ./lib -i __mocks__ -i .test.js -p",
+    "build:flow": "flow-copy-source --ignore .test.js ./src ./lib",
+    "build:package-json": "node ./resources/update-package-json.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "flow": "flow check",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "prepublishOnly": ". ./resources/prepublish.sh"
   },
   "license": "Apache-2.0",
   "dependencies": {

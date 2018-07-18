@@ -1,10 +1,11 @@
-const credentials = require('./credentials');
-const api = require('./api');
-const asset = require('./asset');
-const contentType = require('./content-types');
-const document = require('./documents');
-const field = require('./fields');
-const project = require('./project');
+const credentials = require('./credentials.js');
+const api = require('./api.js');
+const asset = require('./asset/index.js');
+const contentType = require('./content-types/index.js');
+const document = require('./documents/index.js');
+const field = require('./fields/index.js');
+const project = require('./project/index.js');
+const schema = require('./schema/index.js');
 
 const Mozaik = {
   credentials,
@@ -14,6 +15,7 @@ const Mozaik = {
   document,
   field,
   project,
+  schema,
 };
 
 module.exports = Mozaik;
