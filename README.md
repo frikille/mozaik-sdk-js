@@ -12,26 +12,21 @@ Mozaik SDK needs to config properties:
 Config is can be set, and is applied in the following order:
 
 -   `.mozaikrc` file
--   `.env` file
 -   environment variables
 
 ### `.mozaikrc` file
 
 ```
-[profile workspace-name]
-api_endpoint=https://api.mozaik.io/graphql/your-project-name
-access_key=your-access-key
+[default]
+api_endpoint = "https://api.mozaik.io/graphql/your-project-name"
+api_access_key = "your-access-key"
+
+[other-project]
+api_endpoint = "https://api.mozaik.io/graphql/other-project"
+api_access_key = "your-access-key"
 ```
 
-### `.env` file
-
-```
-mozaik_profile=workspace-name
-mozaik_api_endpoint=https://api.mozaik.io/graphql/your-project-name
-mozaik_access_key=your-access-key
-```
-
-### environment variables
+### Environment variables
 
 ```
 mozaik_profile=workspace-name
