@@ -1,5 +1,5 @@
 {
-  "name": "@mozaik/sdk",
+  "name": "@mozaikio/sdk",
   "version": "0.0.1",
   "description": "Mozaik SDK for Javascript in Node.js",
   "main": "index.js",
