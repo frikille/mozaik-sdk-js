@@ -6,6 +6,9 @@ module.exports = function createSchema(options) {
   if (fileExists(options.schemaPath)) {
     const schema = fs.readFileSync(options.schemaPath);
 
-    createMozaikSchema(schema).then(result => console.log(result.succes)); // eslint-disable-line
+    createMozaikSchema({ schema: schema.toString() }).then(result => {
+      // eslint-disable-next-line
+      console.log(result.success);
+    });
   }
 };

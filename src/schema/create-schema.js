@@ -24,5 +24,5 @@ module.exports = function importSchema(options: Options) {
   ];
 
   const sortedContentTypeInputs = sortContentTypeInputs(contentTypesToCreate);
-  apply(sortedContentTypeInputs).then(() => ({ success: true }));
+  return apply(sortedContentTypeInputs).then(() => ({ success: true }));
 };
