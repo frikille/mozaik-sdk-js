@@ -1,25 +1,25 @@
 // @flow
 import type { FieldDefinitionNode } from 'graphql/language/ast';
 import type { FieldInput } from '../fields/create/index.js';
-const { GraphQLError, GraphQLString } = require('graphql');
+const { GraphQLError, GraphQLString, GraphQLBoolean } = require('graphql');
 const getDirectiveValue = require('./get-directive-value.js');
 
-const typeMapping = {
-  String: 'TEXT_SINGLELINE',
-  Int: 'INTEGER',
-  Float: 'FLOAT',
-  Boolean: 'BOOLEAN',
-  ID: 'TEXT_SINGLELINE',
-  SinglelineText: 'TEXT_SINGLELINE',
-  MultilineText: 'TEXT_MULTILINE',
-  RichText: 'RICH_TEXT',
-  Date: 'DATE',
-  DateTime: 'DATE_TIME',
-  Audio: 'AUDIO',
-  File: 'FILE',
-  Image: 'IMAGE',
-  Video: 'VIDEO',
-};
+const typeMapping = new Map([
+  ['String', 'TEXT_SINGLELINE'],
+  ['Int', 'INTEGER'],
+  ['Float', 'FLOAT'],
+  ['Boolean', 'BOOLEAN'],
+  ['ID', 'TEXT_SINGLELINE'],
+  ['SinglelineText', 'TEXT_SINGLELINE'],
+  ['MultilineText', 'TEXT_MULTILINE'],
+  ['RichText', 'RICH_TEXT'],
+  ['Date', 'DATE'],
+  ['DateTime', 'DATE_TIME'],
+  ['Audio', 'AUDIO'],
+  ['File', 'FILE'],
+  ['Image', 'IMAGE'],
+  ['Video', 'VIDEO'],
+]);
 
 const reservedFieldNames = [
   'id',
@@ -64,14 +64,63 @@ function getFieldType(type): FieldOptions {
   }
 }
 
+function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
+  const { directives = [] } = definition;
+  const groupName = getDirectiveValue(
+    directives,
+    'config',
+    'groupName',
+    GraphQLString,
+    v => {
+      if (v === '') {
+        throw new Error('group name can not be empty');
+      }
+    }
+  );
+
+  if (groupName) {
+    input.groupName = String(groupName);
+  }
+}
+
+function setIncludeInDisplayName(
+  definition: FieldDefinitionNode,
+  input: FieldInput
+) {
+  const { type, directives = [] } = definition;
+  const isTitle = getDirectiveValue(
+    directives,
+    'config',
+    'isTitle',
+    GraphQLBoolean,
+    () => {}
+  );
+
+  if (isTitle) {
+    if (input.type !== 'TEXT_SINGLELINE') {
+      const singleLineTypes = [];
+      for (const [graphqlType, mozaikType] of typeMapping) {
+        if (mozaikType === 'TEXT_SINGLELINE') {
+          singleLineTypes.push(graphqlType);
+        }
+      }
+      throw new GraphQLError(
+        `isTitle flag is only valid on ${singleLineTypes.join(', ')} fields`,
+        type
+      );
+    }
+    input.includeInDisplayName = true;
+  }
+}
+
 module.exports = function createFieldInput(
   definition: FieldDefinitionNode
 ): FieldInput {
-  const { type, name, directives = [] } = definition;
+  const { type, name } = definition;
 
   const graphqlType = getFieldType(type);
 
-  let mozaikType = typeMapping[graphqlType.type];
+  let mozaikType = typeMapping.get(graphqlType.type);
   if (!mozaikType) {
     mozaikType = graphqlType.type
       .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
@@ -92,21 +141,8 @@ module.exports = function createFieldInput(
     );
   }
 
-  const groupName = getDirectiveValue(
-    directives || [],
-    'config',
-    'groupName',
-    GraphQLString,
-    v => {
-      if (v === '') {
-        throw new Error('group name can not be empty');
-      }
-    }
-  );
-
-  if (groupName) {
-    input.groupName = String(groupName);
-  }
+  setGroupName(definition, input);
+  setIncludeInDisplayName(definition, input);
 
   return input;
 };

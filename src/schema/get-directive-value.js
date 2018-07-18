@@ -11,7 +11,7 @@ function getArgumentValue(
 ) {
   const validArgs = args.filter(a => a.name.value === name);
   if (validArgs.length === 0) {
-    return '';
+    return undefined;
   }
   const value = valueFromAST(validArgs[0].value, type);
   if (typeof value === 'undefined') {
