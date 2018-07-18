@@ -1,14 +1,9 @@
 {
-  "name": "mozaik-sdk",
-  "version": "0.0.1",
+  "name": "@mozaikio/sdk",
+  "version": "0.1.0",
   "description": "Mozaik SDK for Javascript in Node.js",
   "main": "index.js",
   "repository": "git@github.com:mozaikio/mozaik-sdk-js.git",
-  "author": {
-    "name": "Mozaik.io",
-    "email": "hello@mozaik.io",
-    "url": "https://www.mozaik.io/"
-  },
   "scripts": {
     "prebuild": "rm -rf lib",
     "build": "flow-remove-types src/ -d lib/",

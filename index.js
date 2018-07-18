@@ -1,1 +1,1 @@
-require('./lib/mozaik.js');
+require('./mozaik.js');
