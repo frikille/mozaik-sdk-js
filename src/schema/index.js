@@ -1,7 +1,7 @@
-const importSchema = require('./import-schema');
+const createSchema = require('./create-schema');
 
 const schema = {
-  importSchema,
+  createSchema,
 };
 
 module.exports = schema;

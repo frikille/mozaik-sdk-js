@@ -22,8 +22,10 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "commander": "^2.16.0",
     "graphql": "^0.13.2",
-    "node-fetch": "^2.1.2"
+    "node-fetch": "^2.1.2",
+    "toml": "^2.3.3"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.5",
