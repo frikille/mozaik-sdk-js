@@ -21,12 +21,24 @@ if (fileExists('.mozaikrc')) {
   }
 }
 
-if (!apiEndpoint) {
+if (!apiEndpoint || process.env.MOZAIK_API_ENDPOINT) {
   apiEndpoint = process.env.MOZAIK_API_ENDPOINT;
 }
 
+if (!accessToken || process.env.MOZAIK_API_ACCESS_KEY) {
+  accessToken = process.env.MOZAIK_API_ACCESS_KEY;
+}
+
+if (!apiEndpoint) {
+  throw new Error(
+    'API endpoint config must be set either in the ".mozaikrc" config file or "MOZAIK_API_ENDPOINT" environment variable'
+  );
+}
+
 if (!accessToken) {
-  accessToken = process.env.MOZAIK_ACCESS_TOKEN;
+  throw new Error(
+    'API access key config must be set either in the ".mozaikrc" config file or "MOZAIK_API_ACCESS_KEY" environment variable'
+  );
 }
 
 const credentials = {

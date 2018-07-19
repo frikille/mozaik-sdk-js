@@ -14,7 +14,7 @@ const publishDocumentMutation = `
   }
 `;
 
-function publishDocument(documentId) {
+function publishDocument({ documentId }) {
   return MozaikAPI.call({
     query: publishDocumentMutation,
     variables: {
