@@ -15,6 +15,9 @@
     "email": "hello@mozaik.io",
     "url": "https://www.mozaik.io/"
   },
+  "bin": {
+    "mozaikio": "./bin/mozaikio.js"
+  },
   "scripts": {
     "prebuild": "rm -rf ./lib && mkdir ./lib",
     "build": "npm run build:src && npm run build:package-json",
