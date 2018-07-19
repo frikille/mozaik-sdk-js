@@ -29,11 +29,11 @@ or
 
 ## Config
 
-Mozaik SDK needs to two config parameters to be set to be able to make requests to the API:
+The Mozaik SDK needs the following parameters to be able to make requests to the API:
 -   API endpoint for the project
 -   Access key for the project
 
-Config is can be set, and is applied in the following order:
+Config can be set, and is applied in the following order:
 
 -   `.mozaikrc` file in the project's root folder
 -   environment variables
@@ -55,7 +55,7 @@ api_endpoint = "https://api.mozaik.io/graphql/other-project"
 api_access_key = "your-access-key"
 ```
 
-It is highly recommended to always have a `default` configuration. A `.mozaikrc` file can contain multiple definitions, and each definition is called a **profile**. You can switch between profiles by using the `MOZAIK_PROFILE` environment variable. If `MOZAIK_PROFILE` environment variable is not set, the SDK will try to use the `default` profile api endpont and api access key values.
+It is highly recommended to always have a `default` configuration. A `.mozaikrc` file can contain multiple definitions, and each definition is called a **profile**. You can switch between profiles by using the `MOZAIK_PROFILE` environment variable. If `MOZAIK_PROFILE` environment variable is not set, the SDK will try to use the `default` profile api endpoint and api access key values.
 
 ### Environment variables
 
@@ -123,7 +123,7 @@ type Homepage implements SingletonContentType {
 
 #### Interfaces
 
-To define a content type in Mozaik, a type definition must implements one of the following interfaces
+To define a content type in Mozaik, a type definition must implement one of the following interfaces
 
 - `SimpleContentType`
 - `SingletonContentType`
@@ -147,7 +147,7 @@ The following scalars can be used to define a field value besides the default Gr
 
 #### Enums
 
-By defining a GraphQL enum type, Mozaik will create an Enumeration content type. The enumeration content type can be used as values for a select input in the content editor.
+By defining a GraphQL enum type, the Mozaik SDK will create an Enumeration content type. The enumeration content type can be used as values for a select input in the content editor.
 
 #### Directives
 
