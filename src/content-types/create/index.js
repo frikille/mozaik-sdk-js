@@ -23,6 +23,7 @@ const createContentTypeMutation = `
       }
       contentType {
         id
+        name
         apiId
       }
     }

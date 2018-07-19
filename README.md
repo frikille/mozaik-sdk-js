@@ -15,11 +15,13 @@ Mozaik SDK is a small wrapper around the Mozaik GraphQL API. It gives the basic 
 
 Mozaik SDK can be installed from the NPM registry by running 
 
-`npm install @mozaikio/sdk -D`
+`npm install --save-dev @mozaikio/sdk`
 
 or
 
-`yarn add @mozaikio/sdk -D` 
+`yarn add @mozaikio/sdk --dev`
+
+> **The SDK requires Node 8 or later**
 
 ## Config
 
@@ -64,20 +66,94 @@ MOZAIK_API_ACCESS_KEY=your-access-key
 ### CLI
 
 #### `init`
+Command: `mozaikio init`
+
+It creates a `.mozaikrc` file with the default profile and a `mozaik-schema.graphql` file that can be used to define a content type schema.
 
 #### `create`
+
+Command: `mozaikio create`
+
+It creates a content type schema based on the content of the `mozaik-schema.graphql` file
 
 ### SDK
 
 #### Creating a content type
 
+[API documentation](https://www.mozaik.io/docs/api-docs/mutation/createcontenttype)
+
+```javascript
+const createContentType = require('@mozaikio/sdk/content-types/create');
+
+// Creating a simple content type
+const contentType = {
+  name: 'Blog post',
+
+}
+createContentType({ contentType }).then(result => {
+  console.log(result.data.createContentType);
+});
+
+// { contentType: { id: "c9eb8929-aadd-401f-a28e-bbc83366139c", name: "Blog post", apiId: "BLOG_POST" }, errors: [] }
+```
+
 #### Creating a content type field
 
-#### Creating an asset
+[API documentation](https://www.mozaik.io/docs/api-docs/mutation/createfield)
+
+```javascript
+const createField = require('@mozaikio/sdk/fields/create');
+
+// Creating a simple content type
+const field = {
+  label: 'Title',
+  apiId: 'title',
+  type: 'TEXT_SINGLELINE'
+}
+createField({ field, contentTypeId: 'c9eb8929-aadd-401f-a28e-bbc83366139c' }).then(result => {
+  console.log(result.data.createField);
+});
+
+// { field: { id: "08d0325e-7aed-45af-b752-b3c8b826aa4b", label: "Title", apiId: "title" }, errors: [] }
+```
 
 #### Creating a document
 
+[API documentation](https://www.mozaik.io/docs/api-docs/mutation/createdocument)
+
+```javascript
+const createDocument = require('@mozaikio/sdk/documents/create');
+
+const document = {
+  slug: 'hello-world',
+  contentType: 'BLOG_POST',
+  content: {
+    title: 'Hello World!'
+  }
+}
+
+createDocument({ document }).then((result) => {
+  console.log(result.data.createDocument);
+});
+
+// { document: { id: "138a2b1e-2629-4f20-b696-21c4cdbc7aff" }, errors: [] }
+```
+
 #### Publish a document
+
+[API documentation](https://www.mozaik.io/docs/api-docs/mutation/publishdocument)
+
+```javascript
+const publishDocument = require('@mozaikio/sdk/documents/publish');
+
+const documentId = '138a2b1e-2629-4f20-b696-21c4cdbc7aff'
+
+publishDocument({ documentId }).then((result) => {
+  console.log(result.data.publishDocument);
+});
+
+// { document: { id: "138a2b1e-2629-4f20-b696-21c4cdbc7aff" }, errors: [] }
+```
 
 ## Contributing
 ### Coding style
