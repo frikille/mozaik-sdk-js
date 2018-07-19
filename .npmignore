@@ -8,5 +8,4 @@ node_modules
 coverage
 resources
 src
-lib
 jest.config.js
