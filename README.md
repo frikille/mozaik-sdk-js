@@ -249,6 +249,9 @@ publishDocument({ documentId }).then((result) => {
 ```
 
 ## Contributing
+
+We actively welcome pull requests.
+
 ### Coding style
 
 1.  Most of the code is functions. One per module (ideally) so no need to guess what the file does.
@@ -256,6 +259,10 @@ publishDocument({ documentId }).then((result) => {
 1.  Functions accept named params via a plain object and an optional callback. If no callback is supplied return a promise
 1.  Ideally functions are sub 200 LOC
 1.  Importing module by full relative path: must include extension!
+
+## Changelog
+
+Changes are tracked as [GitHub releases](https://github.com/mozaikio/mozaik-sdk-js/releases).
 
 ## Licence
 
