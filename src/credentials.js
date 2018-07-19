@@ -29,18 +29,6 @@ if (!accessToken || process.env.MOZAIK_API_ACCESS_KEY) {
   accessToken = process.env.MOZAIK_API_ACCESS_KEY;
 }
 
-if (!apiEndpoint) {
-  throw new Error(
-    'API endpoint config must be set either in the ".mozaikrc" config file or "MOZAIK_API_ENDPOINT" environment variable'
-  );
-}
-
-if (!accessToken) {
-  throw new Error(
-    'API access key config must be set either in the ".mozaikrc" config file or "MOZAIK_API_ACCESS_KEY" environment variable'
-  );
-}
-
 const credentials = {
   API_ENDPOINT: apiEndpoint,
   ACCESS_TOKEN: accessToken,
