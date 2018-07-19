@@ -155,17 +155,18 @@ By defining a GraphQL enum type, Mozaik will create an Enumeration content type.
 
 Arguments:
 
-| Name | Type | Description | Required | Default value |
-| groupName | String | Sets on which tab the field should appear in the content editor | No | "Content" |
-| isTitle | Boolean | Marks the field to be part of the document `displayName` property | No | `false` |
+Name | Type | Description | Required | Default value 
+---- | ---- | ----------- | -------- | -------------
+groupName | String | Sets on which tab the field should appear in the content editor | No | "Content"
+isTitle | Boolean | Marks the field to be part of the document `displayName` property | No | `false`
 
 2. `@config` on Enum value
 
-Arguments
+Arguments:
 
-| Name | Type | Description | Required | Default value |
-| ---- | ---- | ----------- | -------- | ------------- |
-| label | String | Defines the label that appears in the select dropdown | No | The enum value |
+Name | Type | Description | Required | Default value
+---- | ---- | ----------- | -------- | -------------
+label | String | Defines the label that appears in the select dropdown | No | The enum value
 
 
 ### SDK
