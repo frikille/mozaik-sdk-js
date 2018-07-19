@@ -4,12 +4,16 @@ Mozaik SDK for Javascript in Node.js with CLI.
 
 Mozaik SDK is a small wrapper around the Mozaik GraphQL API. It gives the basic tools to manage a project content type schema and content programatically.
 
-> Currently the SDK supports only the following operations:
+> SDK features:
 > 1. Creating content types
 > 1. Creating content type fields
 > 1. Creating assets
 > 1. Creating documents
 > 1. Publish documents
+>
+> CLI features:
+> 1. Create default config file and `mozaik-schema.graphql`
+> 1. Create a content type schema based on the `mozaik-schema.graphql` file
 
 ## Install
 
@@ -76,6 +80,93 @@ Command: `mozaikio create`
 
 It creates a content type schema based on the content of the `mozaik-schema.graphql` file
 
+### Mozaik Schema Definition Language
+
+The Mozaik Schema Definition Language (mSDL) is built on top of the GraphQL Schema Definition Language (GraphQL SDL). 
+
+```graphql
+type Author implements SimpleContentType {
+  name: SinglelineText @config(groupName: "personal", isTitle: true)
+  email: SinglelineText @config(groupName: "personal")
+  twitter: SinglelineText @config(groupName: "social")
+}
+
+type Category implements SimpleContentType {
+  name: String @config(isTitle: true)
+  subcategories: [Category]
+}
+
+type Post implements SimpleContentType {
+  title: String @config(isTitle: true)
+  body: RichText
+  postAuthor: Author
+  featuredImage: FeaturedImage
+  categories: [Category]
+}
+
+enum ColorEnum {
+  blue @config(label: "Blue")
+  lightRed @config(label: "Light red")
+}
+
+type FeaturedImage implements EmbeddableContentType {
+  url: String
+  title: String @config(isTitle: true)
+  background: ColorEnum
+}
+
+type Homepage implements SingletonContentType {
+  title: String @config(isTitle: true)
+  highlightedPost: [Post]
+}
+```
+
+#### Interfaces
+
+To define a content type in Mozaik, a type definition must implements one of the following interfaces
+
+- `SimpleContentType`
+- `SingletonContentType`
+- `EmbeddableContentType`
+
+Your can read more about the different content types in the [Mozaik docs](https://www.mozaik.io/docs/our-approach#content-types)
+
+#### Scalars
+
+The following scalars can be used to define a field value besides the default GraphQL scalars.
+
+- `SinglelineText`
+- `MultilineText`
+- `RichText`
+- `Date`
+- `DateTime`
+- `Audio`
+- `File`
+- `Image`
+- `Video`
+
+#### Enums
+
+By defining a GraphQL enum type, Mozaik will create an Enumeration content type. The enumeration content type can be used as values for a select input in the content editor.
+
+#### Directives
+
+1. `@config` on a Field definition
+
+Arguments:
+| Name | Type | Description | Required | Default value |
+| ---- | ---- | ----------- | -------- | ------------- |
+| groupName | String | Sets on which tab the field should appear in the content editor | No | "Content" |
+| isTitle | Boolean | Marks the field to be part of the document `displayName` property | No | `false` |
+
+2. `@config` on Enum value
+
+Arguments
+| Name | Type | Description | Required | Default value |
+| ---- | ---- | ----------- | -------- | ------------- |
+| label | String | Defines the label that appears in the select dropdown | No | The enum value |
+
+
 ### SDK
 
 #### Creating a content type
@@ -87,14 +178,14 @@ const createContentType = require('@mozaikio/sdk/content-types/create');
 
 // Creating a simple content type
 const contentType = {
-  name: 'Blog post',
+  name: 'Post',
 
 }
 createContentType({ contentType }).then(result => {
   console.log(result.data.createContentType);
 });
 
-// { contentType: { id: "c9eb8929-aadd-401f-a28e-bbc83366139c", name: "Blog post", apiId: "BLOG_POST" }, errors: [] }
+// { contentType: { id: "c9eb8929-aadd-401f-a28e-bbc83366139c", name: "Post", apiId: "POST" }, errors: [] }
 ```
 
 #### Creating a content type field
@@ -126,7 +217,7 @@ const createDocument = require('@mozaikio/sdk/documents/create');
 
 const document = {
   slug: 'hello-world',
-  contentType: 'BLOG_POST',
+  contentType: 'POST',
   content: {
     title: 'Hello World!'
   }
