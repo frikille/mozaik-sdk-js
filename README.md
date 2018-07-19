@@ -154,14 +154,15 @@ By defining a GraphQL enum type, Mozaik will create an Enumeration content type.
 1. `@config` on a Field definition
 
 Arguments:
+
 | Name | Type | Description | Required | Default value |
-| ---- | ---- | ----------- | -------- | ------------- |
 | groupName | String | Sets on which tab the field should appear in the content editor | No | "Content" |
 | isTitle | Boolean | Marks the field to be part of the document `displayName` property | No | `false` |
 
 2. `@config` on Enum value
 
 Arguments
+
 | Name | Type | Description | Required | Default value |
 | ---- | ---- | ----------- | -------- | ------------- |
 | label | String | Defines the label that appears in the select dropdown | No | The enum value |
@@ -254,3 +255,14 @@ publishDocument({ documentId }).then((result) => {
 1.  Functions accept named params via a plain object and an optional callback. If no callback is supplied return a promise
 1.  Ideally functions are sub 200 LOC
 1.  Importing module by full relative path: must include extension!
+
+## Licence
+
+Copyright [2018] [Mozaik.io](https://www.mozaik.io)
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
