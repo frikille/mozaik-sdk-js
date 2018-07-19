@@ -151,7 +151,7 @@ By defining a GraphQL enum type, Mozaik will create an Enumeration content type.
 
 #### Directives
 
-1. `@config` on a Field definition
+##### `@config` on a Field definition
 
 Arguments:
 
@@ -160,7 +160,7 @@ Name | Type | Description | Required | Default value
 groupName | String | Sets on which tab the field should appear in the content editor | No | "Content"
 isTitle | Boolean | Marks the field to be part of the document `displayName` property | No | `false`
 
-2. `@config` on Enum value
+##### `@config` on Enum value
 
 Arguments:
 
