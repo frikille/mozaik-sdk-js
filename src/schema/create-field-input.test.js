@@ -215,4 +215,40 @@ describe('createFieldInput function', () => {
       });
     });
   });
+
+  describe('Field with label', () => {
+    it('should set the label parameter', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText @config(label: "My test field")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'My test field',
+        apiId: 'myField',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
+    });
+
+    it('should throw an error if not string', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText @config(label: 42)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'was expecting String',
+        locations: [{ line: 3, column: 50 }],
+      });
+    });
+  });
 });

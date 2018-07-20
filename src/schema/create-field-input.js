@@ -83,6 +83,27 @@ function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
   }
 }
 
+function getLabel(definition: FieldDefinitionNode): string {
+  const { name, directives = [] } = definition;
+  const label = getDirectiveValue(
+    directives,
+    'config',
+    'label',
+    GraphQLString,
+    v => {
+      if (v === '') {
+        throw new Error('label can not be empty');
+      }
+    }
+  );
+
+  if (label) {
+    return String(label);
+  } else {
+    return name.value;
+  }
+}
+
 function setIncludeInDisplayName(
   definition: FieldDefinitionNode,
   input: FieldInput
@@ -128,7 +149,7 @@ module.exports = function createFieldInput(
   }
 
   const input: FieldInput = {
-    label: name.value,
+    label: getLabel(definition),
     apiId: name.value,
     type: mozaikType,
     hasMultipleValues: graphqlType.hasMultipleValues,

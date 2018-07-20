@@ -12,7 +12,7 @@ type Category implements SimpleContentType {
 type Post implements SimpleContentType {
   title: String @config(isTitle: true)
   body: RichText
-  postAuthor: Author
+  postAuthor: Author @config(label: "author")
   featuredImage: FeaturedImage
   categories: [Category]
 }
