@@ -85,7 +85,7 @@ function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
 
 function getLabel(definition: FieldDefinitionNode): string {
   const { name, directives = [] } = definition;
-  const label = getDirectiveValue(
+  let label = getDirectiveValue(
     directives,
     'config',
     'label',
@@ -98,7 +98,7 @@ function getLabel(definition: FieldDefinitionNode): string {
   );
 
   if (label) {
-    return String(label);
+    label = String(label);
   } else {
     // we'll convert camel case to a lowercase label where words are separate by space
     // if there is an uppercase abbreviation we'll leave it untouched
@@ -106,7 +106,7 @@ function getLabel(definition: FieldDefinitionNode): string {
     // if the field name contains a number than we'll add a space before the number
     // e.g. "myField" => "my field", "myCMSId" => "my CMS id"
     //      "my_field" => "my field", "myField1" => "my field 1"
-    let label = name.value
+    label = name.value
       .replace('_', ' ')
       .replace(
         /([a-zA-Z])([A-Z])([a-z])/g,
@@ -114,9 +114,9 @@ function getLabel(definition: FieldDefinitionNode): string {
       )
       .replace(/([a-z])([A-Z])/g, g => `${g[0]} ${g[1]}`)
       .replace(/([a-zA-Z])([0-9])/g, g => `${g[0]} ${g[1]}`);
-
-    return label.charAt(0).toUpperCase() + label.slice(1);
   }
+
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 function setIncludeInDisplayName(

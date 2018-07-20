@@ -236,6 +236,25 @@ describe('createFieldInput function', () => {
       expect(createFieldInput(input)).toEqual(output);
     });
 
+    it('the first letter of the lable should be capitalised', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText @config(label: "my test field")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'My test field',
+        apiId: 'myField',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
+    });
+
     it('should throw an error if not string', () => {
       const schema = `
         type Object implements SimpleContentType {
