@@ -113,15 +113,15 @@ describe('createFieldInput function', () => {
     it('correctly parses the group name', () => {
       const schema = `
         type Object implements SimpleContentType {
-          field1: SinglelineText @config(groupName: "foo")
+          field: SinglelineText @config(groupName: "foo")
         }
       `;
       const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'field1',
-        apiId: 'field1',
+        label: 'field',
+        apiId: 'field',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         groupName: 'foo',
@@ -174,7 +174,7 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'myTitle',
+        label: 'my title',
         apiId: 'myTitle',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
@@ -249,6 +249,51 @@ describe('createFieldInput function', () => {
         message: 'was expecting String',
         locations: [{ line: 3, column: 50 }],
       });
+    });
+  });
+
+  describe('Field without label', () => {
+    it('should convert the api id correctly to a label', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText
+          myCMSField: SinglelineText
+          my_field: SinglelineText
+          myField1: SinglelineText
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields;
+      const output = [
+        {
+          label: 'my field',
+          apiId: 'myField',
+          type: 'TEXT_SINGLELINE',
+          hasMultipleValues: false,
+        },
+        {
+          label: 'my CMS field',
+          apiId: 'myCMSField',
+          type: 'TEXT_SINGLELINE',
+          hasMultipleValues: false,
+        },
+        {
+          label: 'my field',
+          apiId: 'my_field',
+          type: 'TEXT_SINGLELINE',
+          hasMultipleValues: false,
+        },
+        {
+          label: 'my field 1',
+          apiId: 'myField1',
+          type: 'TEXT_SINGLELINE',
+          hasMultipleValues: false,
+        },
+      ];
+
+      for (let i = 0; i < output.length; i++) {
+        expect(createFieldInput(input[i])).toEqual(output[i]);
+      }
     });
   });
 });

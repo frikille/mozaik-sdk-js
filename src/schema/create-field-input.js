@@ -100,7 +100,20 @@ function getLabel(definition: FieldDefinitionNode): string {
   if (label) {
     return String(label);
   } else {
-    return name.value;
+    // we'll convert camel case to a lowercase label where words are separate by space
+    // if there is an uppercase abbreviation we'll leave it untouched
+    // underscore chars will be replaced with spaces
+    // if the field name contains a number than we'll add a space before the number
+    // e.g. "myField" => "my field", "myCMSId" => "my CMS id"
+    //      "my_field" => "my field", "myField1" => "my field 1"
+    return name.value
+      .replace('_', ' ')
+      .replace(
+        /([a-zA-Z])([A-Z])([a-z])/g,
+        g => `${g[0]} ${g[1].toLowerCase()}${g[2]}`
+      )
+      .replace(/([a-z])([A-Z])/g, g => `${g[0]} ${g[1]}`)
+      .replace(/([a-zA-Z])([0-9])/g, g => `${g[0]} ${g[1]}`);
   }
 }
 
