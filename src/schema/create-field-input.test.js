@@ -13,7 +13,7 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'twitter',
+        label: 'Twitter',
         apiId: 'twitter',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
@@ -37,7 +37,7 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[1].fields[0];
 
       const output = {
-        label: 'post',
+        label: 'Post',
         apiId: 'post',
         type: 'FEATURED_POST',
         hasMultipleValues: false,
@@ -58,7 +58,7 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'tags',
+        label: 'Tags',
         apiId: 'tags',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: true,
@@ -100,7 +100,7 @@ describe('createFieldInput function', () => {
     const input = simpleContentTypes[0].fields[1];
 
     const output = {
-      label: 'comments',
+      label: 'Comments',
       apiId: 'comments',
       type: 'FEATURED_POST_COMMENT',
       hasMultipleValues: true,
@@ -120,7 +120,7 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'field',
+        label: 'Field',
         apiId: 'field',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
@@ -174,7 +174,7 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'my title',
+        label: 'My title',
         apiId: 'myTitle',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
@@ -266,25 +266,25 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields;
       const output = [
         {
-          label: 'my field',
+          label: 'My field',
           apiId: 'myField',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
         },
         {
-          label: 'my CMS field',
+          label: 'My CMS field',
           apiId: 'myCMSField',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
         },
         {
-          label: 'my field',
+          label: 'My field',
           apiId: 'my_field',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
         },
         {
-          label: 'my field 1',
+          label: 'My field 1',
           apiId: 'myField1',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,

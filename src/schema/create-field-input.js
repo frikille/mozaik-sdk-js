@@ -106,7 +106,7 @@ function getLabel(definition: FieldDefinitionNode): string {
     // if the field name contains a number than we'll add a space before the number
     // e.g. "myField" => "my field", "myCMSId" => "my CMS id"
     //      "my_field" => "my field", "myField1" => "my field 1"
-    return name.value
+    let label = name.value
       .replace('_', ' ')
       .replace(
         /([a-zA-Z])([A-Z])([a-z])/g,
@@ -114,6 +114,8 @@ function getLabel(definition: FieldDefinitionNode): string {
       )
       .replace(/([a-z])([A-Z])/g, g => `${g[0]} ${g[1]}`)
       .replace(/([a-zA-Z])([0-9])/g, g => `${g[0]} ${g[1]}`);
+
+    return label.charAt(0).toUpperCase() + label.slice(1);
   }
 }
 

@@ -20,21 +20,21 @@ describe('createContentTypeInput function', () => {
         fields: [
           {
             apiId: 'name',
-            label: 'name',
+            label: 'Name',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
           },
           {
             apiId: 'twitter',
-            label: 'twitter',
+            label: 'Twitter',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 2,
           },
           {
             apiId: 'email',
-            label: 'email',
+            label: 'Email',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 3,
@@ -74,7 +74,7 @@ describe('createContentTypeInput function', () => {
         fields: [
           {
             apiId: 'title',
-            label: 'title',
+            label: 'Title',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
@@ -115,7 +115,7 @@ describe('createContentTypeInput function', () => {
         fields: [
           {
             apiId: 'url',
-            label: 'url',
+            label: 'Url',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
