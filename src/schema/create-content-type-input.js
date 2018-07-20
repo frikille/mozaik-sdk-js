@@ -7,6 +7,7 @@ import type {
 const { GraphQLString } = require('graphql');
 import type { ContentTypeInput } from '../content-types/create/index.js';
 const getDirectiveValue = require('./get-directive-value.js');
+const generateLabel = require('./generate-label.js');
 
 function createContentTypeInputFromObject(
   definition: ObjectTypeDefinitionNode
@@ -15,7 +16,7 @@ function createContentTypeInputFromObject(
 
   let position = 1;
   const contentTypeInput: ContentTypeInput = {
-    name: name.value,
+    name: generateLabel(name.value),
     apiId: name.value
       .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
       .toUpperCase(),
@@ -44,7 +45,7 @@ function createContentTypeInputFromEnum(
   const { name, values = [] } = definition;
 
   return {
-    name: name.value,
+    name: generateLabel(name.value),
     apiId: name.value
       .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
       .toUpperCase(),

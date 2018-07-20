@@ -56,6 +56,18 @@ describe('createContentTypeInput function', () => {
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
     });
+
+    it('generates a label from the name', () => {
+      const schema = `
+        type CamelCaseName implements SimpleContentType {
+          field1: String
+        }
+        `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0];
+
+      expect(createContentTypeInput(input).name).toEqual('Camel case name');
+    });
   });
 
   describe('SingletonContentType', () => {
@@ -97,6 +109,18 @@ describe('createContentTypeInput function', () => {
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
     });
+
+    it('generates a label from the name', () => {
+      const schema = `
+        type CamelCaseName implements SingletonContentType {
+          field1: String
+        }
+        `;
+      const { singletonContentTypes } = parse(schema);
+      const input = singletonContentTypes[0];
+
+      expect(createContentTypeInput(input).name).toEqual('Camel case name');
+    });
   });
 
   describe('EmbeddableContentType', () => {
@@ -137,6 +161,18 @@ describe('createContentTypeInput function', () => {
       const input = embeddableContentTypes[0];
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
+    });
+
+    it('generates a label from the name', () => {
+      const schema = `
+        type CamelCaseName implements EmbeddableContentType {
+          field1: String
+        }
+        `;
+      const { embeddableContentTypes } = parse(schema);
+      const input = embeddableContentTypes[0];
+
+      expect(createContentTypeInput(input).name).toEqual('Camel case name');
     });
   });
 
@@ -181,6 +217,18 @@ describe('createContentTypeInput function', () => {
       const input = hashmapContentTypes[0];
 
       expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
+    });
+
+    it('generates a label from the name', () => {
+      const schema = `
+        enum CamelCaseName {
+          value1 @config(label: "Value 1")
+        }
+        `;
+      const { hashmapContentTypes } = parse(schema);
+      const input = hashmapContentTypes[0];
+
+      expect(createContentTypeInput(input).name).toEqual('Camel case name');
     });
 
     it('uses enum key as value if @config is not set', () => {
