@@ -10,6 +10,7 @@ export type FieldInput = {
   includeInDisplayName?: boolean,
   position?: number,
   groupName?: string,
+  description?: string,
 };
 
 const createFieldMutation = `

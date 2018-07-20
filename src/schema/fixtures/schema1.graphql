@@ -1,7 +1,7 @@
 type Author implements SimpleContentType {
   name: SinglelineText @config(groupName: "personal", isTitle: true)
   email: SinglelineText @config(groupName: "personal")
-  twitter: SinglelineText @config(groupName: "social")
+  twitter: SinglelineText @config(groupName: "social", description: "Twitter handle")
 }
 
 type Category implements SimpleContentType {
