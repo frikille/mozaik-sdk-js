@@ -4,6 +4,7 @@ import type { FieldInput } from '../fields/create/index.js';
 const { GraphQLError, GraphQLString, GraphQLBoolean } = require('graphql');
 const getDirectiveValue = require('./get-directive-value.js');
 const generateLabel = require('./generate-label.js');
+const getFieldType = require('./get-field-type.js');
 
 const typeMapping = new Map([
   ['String', 'TEXT_SINGLELINE'],
@@ -40,30 +41,6 @@ const reservedFieldNames = [
   'firstPublishDate',
   'latestPublishDate',
 ];
-
-type FieldOptions = {
-  type: string,
-  hasMultipleValues: boolean,
-};
-
-function getFieldType(type): FieldOptions {
-  switch (type.kind) {
-    case 'NamedType':
-      return {
-        type: type.name.value,
-        hasMultipleValues: false,
-      };
-    case 'ListType':
-      return {
-        type: getFieldType(type.type).type,
-        hasMultipleValues: true,
-      };
-    case 'NonNullType':
-      throw new GraphQLError('non-null fields are not supported', type);
-    default:
-      throw new GraphQLError(`unknown field type: ${type.kind}`, type);
-  }
-}
 
 function setDescription(definition: FieldDefinitionNode, input: FieldInput) {
   const { directives = [] } = definition;
