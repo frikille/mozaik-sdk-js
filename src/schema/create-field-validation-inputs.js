@@ -157,6 +157,64 @@ function createPatternValidation(
   return inputs;
 }
 
+// TODO: replace these with min/max validation when the API supports it
+function createImageMaxWidthValidation(
+  field: FieldDefinitionNode,
+  directive: DirectiveNode
+): Array<FieldValidationInput> {
+  const inputs: Array<FieldValidationInput> = [];
+
+  const { arguments: args = [] } = directive;
+  const maxWidth = getArgumentValue(args, 'maxWidth', GraphQLInt, v => {
+    if (parseInt(v) <= 0) {
+      throw new Error('was expecting a positive integer');
+    }
+  });
+  const errorMessage = getArgumentValue(
+    args,
+    'errorMessage',
+    GraphQLString,
+    () => {}
+  );
+  if (typeof maxWidth !== 'undefined') {
+    inputs.push({
+      type: 'IMAGE_WIDTH',
+      config: { imageWidth: parseInt(maxWidth) },
+      errorMessage: errorMessage,
+    });
+  }
+  return inputs;
+}
+
+// TODO: replace these with min/max validation when the API supports it
+function createImageMaxHeightValidation(
+  field: FieldDefinitionNode,
+  directive: DirectiveNode
+): Array<FieldValidationInput> {
+  const inputs: Array<FieldValidationInput> = [];
+
+  const { arguments: args = [] } = directive;
+  const maxHeight = getArgumentValue(args, 'maxHeight', GraphQLInt, v => {
+    if (parseInt(v) <= 0) {
+      throw new Error('was expecting a positive integer');
+    }
+  });
+  const errorMessage = getArgumentValue(
+    args,
+    'errorMessage',
+    GraphQLString,
+    () => {}
+  );
+  if (typeof maxHeight !== 'undefined') {
+    inputs.push({
+      type: 'IMAGE_HEIGHT',
+      config: { imageHeight: parseInt(maxHeight) },
+      errorMessage: errorMessage,
+    });
+  }
+  return inputs;
+}
+
 module.exports = function createFieldValidationInputs(
   field: FieldDefinitionNode
 ): Array<FieldValidationInput> {
@@ -236,8 +294,11 @@ module.exports = function createFieldValidationInputs(
           break;
         case 'File':
         case 'Audio':
-        case 'Image':
         case 'Video':
+          break;
+        case 'Image':
+          inputs.push(...createImageMaxWidthValidation(field, directive));
+          inputs.push(...createImageMaxHeightValidation(field, directive));
           break;
       }
     }

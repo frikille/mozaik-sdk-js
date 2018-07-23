@@ -784,4 +784,128 @@ describe('createFieldValidationInputs function', () => {
       });
     });
   });
+
+  describe('image max width validation on Image field', () => {
+    it('parses the max width value validation correctly', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: Image @validation(maxWidth: 100, errorMessage: "test err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+
+      const expected = [
+        {
+          type: 'IMAGE_WIDTH',
+          config: { imageWidth: 100 },
+          errorMessage: 'test err',
+        },
+      ];
+
+      expect(createFieldValidationInputs(field)).toEqual(expected);
+    });
+
+    it('returns an empty array if max width is not set', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: Image @validation(errorMessage: "test err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+
+      expect(createFieldValidationInputs(field)).toEqual([]);
+    });
+
+    it('throws an error if max width is the wrong type', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: Image @validation(maxWidth: "not a number", errorMessage: "test err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+      expect(() => createFieldValidationInputs(field)).toThrow({
+        message: 'was expecting Int',
+        locations: [{ line: 3, column: 46 }],
+      });
+    });
+
+    it('throws an error if max width is not positive', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: Image @validation(maxWidth: 0, errorMessage: "test err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+      expect(() => createFieldValidationInputs(field)).toThrow({
+        message: 'was expecting a positive integer',
+        locations: [{ line: 3, column: 46 }],
+      });
+    });
+  });
+
+  describe('image max height validation on Image field', () => {
+    it('parses the max height value validation correctly', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: Image @validation(maxHeight: 100, errorMessage: "test err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+
+      const expected = [
+        {
+          type: 'IMAGE_HEIGHT',
+          config: { imageHeight: 100 },
+          errorMessage: 'test err',
+        },
+      ];
+
+      expect(createFieldValidationInputs(field)).toEqual(expected);
+    });
+
+    it('returns an empty array if max height is not set', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: Image @validation(errorMessage: "test err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+
+      expect(createFieldValidationInputs(field)).toEqual([]);
+    });
+
+    it('throws an error if max height is the wrong type', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: Image @validation(maxHeight: "not a number", errorMessage: "test err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+      expect(() => createFieldValidationInputs(field)).toThrow({
+        message: 'was expecting Int',
+        locations: [{ line: 3, column: 47 }],
+      });
+    });
+
+    it('throws an error if max height is not positive', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: Image @validation(maxHeight: 0, errorMessage: "test err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+      expect(() => createFieldValidationInputs(field)).toThrow({
+        message: 'was expecting a positive integer',
+        locations: [{ line: 3, column: 47 }],
+      });
+    });
+  });
 });
