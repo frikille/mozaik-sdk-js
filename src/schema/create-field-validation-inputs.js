@@ -38,99 +38,58 @@ function createValidationFunc(
   };
 }
 
-function createLengthValidation(
-  field: FieldDefinitionNode,
-  directive: DirectiveNode
-): Array<FieldValidationInput> {
-  const inputs: Array<FieldValidationInput> = [];
-
-  const { arguments: args = [] } = directive;
-  const min = getArgumentValue(args, 'minLength', GraphQLInt, () => {});
-  const max = getArgumentValue(args, 'maxLength', GraphQLInt, v => {
-    if (typeof min !== 'undefined' && parseInt(v) < parseInt(min)) {
-      throw new Error('maxLength should be equal or greater than minLength');
-    }
-  });
-  const errorMessage = getArgumentValue(
-    args,
-    'errorMessage',
-    GraphQLString,
-    () => {}
-  );
-
-  if (typeof min === 'undefined' && typeof max === 'undefined') {
-    return [];
-  }
-
-  if (typeof min !== 'undefined' && typeof max !== 'undefined') {
-    inputs.push({
-      type: 'LENGTH_RANGE',
-      config: { lengthMin: parseInt(min), lengthMax: parseInt(max) },
-      errorMessage: errorMessage,
-    });
-  } else if (typeof min !== 'undefined') {
-    inputs.push({
-      type: 'MIN_LENGTH',
-      config: { lengthMin: parseInt(min) },
-      errorMessage: errorMessage,
-    });
-  } else {
-    inputs.push({
-      type: 'MAX_LENGTH',
-      config: { lengthMax: parseInt(max) },
-      errorMessage: errorMessage,
-    });
-  }
-
-  return inputs;
-}
-
-function createMinMaxValidation(
-  field: FieldDefinitionNode,
-  directive: DirectiveNode,
-  type: GraphQLInputType,
-  minMaxFields: Array<string>,
-  configFields: Array<string>,
+function createMinMaxValidationFunc(
+  argNames: Array<string>,
+  argType: GraphQLInputType,
+  validationTypes: Array<string>,
+  configKeys: Array<string>,
   value: mixed => mixed,
   isAGreaterThanB: (a: mixed, b: mixed) => boolean
-): Array<FieldValidationInput> {
-  const inputs: Array<FieldValidationInput> = [];
+): (
+  field: FieldDefinitionNode,
+  directive: DirectiveNode
+) => Array<FieldValidationInput> {
+  return function(field: FieldDefinitionNode, directive: DirectiveNode) {
+    const inputs: Array<FieldValidationInput> = [];
 
-  const { arguments: args = [] } = directive;
-  const min = getArgumentValue(args, minMaxFields[0], type, v => {
-    value(v);
-  });
-  const max = getArgumentValue(args, minMaxFields[1], type, v => {
-    value(v);
-    if (typeof min !== 'undefined' && isAGreaterThanB(min, v)) {
-      throw new Error('max should be equal or greater than min');
+    const { arguments: args = [] } = directive;
+    const min = getArgumentValue(args, argNames[0], argType, v => {
+      value(v);
+    });
+    const max = getArgumentValue(args, argNames[1], argType, v => {
+      value(v);
+      if (typeof min !== 'undefined' && isAGreaterThanB(min, v)) {
+        throw new Error(
+          `${argNames[1]} should be equal or greater than ${argNames[0]}`
+        );
+      }
+    });
+    const errorMessage = getArgumentValue(
+      args,
+      'errorMessage',
+      GraphQLString,
+      () => {}
+    );
+
+    if (typeof min === 'undefined' && typeof max === 'undefined') {
+      return [];
     }
-  });
-  const errorMessage = getArgumentValue(
-    args,
-    'errorMessage',
-    GraphQLString,
-    () => {}
-  );
 
-  if (typeof min === 'undefined' && typeof max === 'undefined') {
-    return [];
-  }
+    const config = {};
+    if (typeof min !== 'undefined' && typeof max !== 'undefined') {
+      config[configKeys[0]] = value(min);
+      config[configKeys[1]] = value(max);
+      inputs.push({ type: validationTypes[2], config, errorMessage });
+    } else if (typeof min !== 'undefined') {
+      config[configKeys[0]] = value(min);
+      inputs.push({ type: validationTypes[0], config, errorMessage });
+    } else {
+      config[configKeys[1]] = value(max);
+      inputs.push({ type: validationTypes[1], config, errorMessage });
+    }
 
-  const config = {};
-  if (typeof min !== 'undefined' && typeof max !== 'undefined') {
-    config[configFields[0]] = value(min);
-    config[configFields[1]] = value(max);
-    inputs.push({ type: 'RANGE', config, errorMessage });
-  } else if (typeof min !== 'undefined') {
-    config[configFields[0]] = value(min);
-    inputs.push({ type: 'MIN_VALUE', config, errorMessage });
-  } else {
-    config[configFields[1]] = value(max);
-    inputs.push({ type: 'MAX_VALUE', config, errorMessage });
-  }
-
-  return inputs;
+    return inputs;
+  };
 }
 
 function parseDate(value: string): DateType {
@@ -225,6 +184,59 @@ const createFileTypeValidation = createValidationFunc(
   }
 );
 
+const createLengthMinMaxValidation = createMinMaxValidationFunc(
+  ['minLength', 'maxLength'],
+  GraphQLInt,
+  ['MIN_LENGTH', 'MAX_LENGTH', 'LENGTH_RANGE'],
+  ['lengthMin', 'lengthMax'],
+  v => parseInt(v),
+  (a, b) => parseInt(a) > parseInt(b)
+);
+
+const createIntMinMaxValidation = createMinMaxValidationFunc(
+  ['min', 'max'],
+  GraphQLInt,
+  ['MIN_VALUE', 'MAX_VALUE', 'RANGE'],
+  ['valueMinInt', 'valueMaxInt'],
+  v => parseInt(v),
+  (a, b) => parseInt(a) > parseInt(b)
+);
+
+const createFloatMinMaxValidation = createMinMaxValidationFunc(
+  ['min', 'max'],
+  GraphQLFloat,
+  ['MIN_VALUE', 'MAX_VALUE', 'RANGE'],
+  ['valueMinFloat', 'valueMaxFloat'],
+  v => parseFloat(v),
+  (a, b) => parseFloat(a) > parseFloat(b)
+);
+
+const createDateMinMaxValidation = createMinMaxValidationFunc(
+  ['min', 'max'],
+  GraphQLString,
+  ['MIN_VALUE', 'MAX_VALUE', 'RANGE'],
+  ['dateMin', 'dateMax'],
+  v => parseDate(String(v)),
+  (a, b) => {
+    const ad = new Date(String(a));
+    const bd = new Date(String(b));
+    return ad.getTime() > bd.getTime();
+  }
+);
+
+const createDateTimeMinMaxValidation = createMinMaxValidationFunc(
+  ['min', 'max'],
+  GraphQLString,
+  ['MIN_VALUE', 'MAX_VALUE', 'RANGE'],
+  ['dateTimeMin', 'dateTimeMax'],
+  v => parseDateTime(String(v)),
+  (a, b) => {
+    const ad = new Date(String(a));
+    const bd = new Date(String(b));
+    return ad.getTime() > bd.getTime();
+  }
+);
+
 module.exports = function createFieldValidationInputs(
   field: FieldDefinitionNode
 ): Array<FieldValidationInput> {
@@ -243,68 +255,20 @@ module.exports = function createFieldValidationInputs(
         case 'SinglelineText':
         case 'MultilineText':
         case 'RichText':
-          inputs.push(...createLengthValidation(field, directive));
+          inputs.push(...createLengthMinMaxValidation(field, directive));
           inputs.push(...createPatternValidation(field, directive));
           break;
         case 'Int':
-          inputs.push(
-            ...createMinMaxValidation(
-              field,
-              directive,
-              GraphQLInt,
-              ['min', 'max'],
-              ['valueMinInt', 'valueMaxInt'],
-              v => parseInt(v),
-              (a, b) => parseInt(a) > parseInt(b)
-            )
-          );
+          inputs.push(...createIntMinMaxValidation(field, directive));
           break;
         case 'Float':
-          inputs.push(
-            ...createMinMaxValidation(
-              field,
-              directive,
-              GraphQLFloat,
-              ['min', 'max'],
-              ['valueMinFloat', 'valueMaxFloat'],
-              v => parseFloat(v),
-              (a, b) => parseFloat(a) > parseFloat(b)
-            )
-          );
+          inputs.push(...createFloatMinMaxValidation(field, directive));
           break;
         case 'Date':
-          inputs.push(
-            ...createMinMaxValidation(
-              field,
-              directive,
-              GraphQLString,
-              ['min', 'max'],
-              ['dateMin', 'dateMax'],
-              v => parseDate(String(v)),
-              (a, b) => {
-                const ad = new Date(String(a));
-                const bd = new Date(String(b));
-                return ad.getTime() > bd.getTime();
-              }
-            )
-          );
+          inputs.push(...createDateMinMaxValidation(field, directive));
           break;
         case 'DateTime':
-          inputs.push(
-            ...createMinMaxValidation(
-              field,
-              directive,
-              GraphQLString,
-              ['min', 'max'],
-              ['dateTimeMin', 'dateTimeMax'],
-              v => parseDateTime(String(v)),
-              (a, b) => {
-                const ad = new Date(String(a));
-                const bd = new Date(String(b));
-                return ad.getTime() > bd.getTime();
-              }
-            )
-          );
+          inputs.push(...createDateTimeMinMaxValidation(field, directive));
           break;
 
         case 'Image':
