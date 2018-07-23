@@ -5,6 +5,7 @@ import type { FieldDefinitionNode, DirectiveNode } from 'graphql/language/ast';
 const getArgumentValue = require('./get-argument-value.js');
 const getFieldType = require('./get-field-type.js');
 const { GraphQLInt, GraphQLFloat, GraphQLString } = require('graphql');
+import type { DateType, DateTime } from '../../index.js';
 
 function createLengthValidation(
   field: FieldDefinitionNode,
@@ -56,14 +57,20 @@ function createLengthValidation(
 function createMinMaxValidation(
   field: FieldDefinitionNode,
   directive: DirectiveNode,
-  type: GraphQLInputType
+  type: GraphQLInputType,
+  configFields: Array<string>,
+  value: mixed => mixed,
+  isAGreaterThanB: (a: mixed, b: mixed) => boolean
 ): Array<FieldValidationInput> {
   const inputs: Array<FieldValidationInput> = [];
 
   const { arguments: args = [] } = directive;
-  const min = getArgumentValue(args, 'min', type, () => {});
+  const min = getArgumentValue(args, 'min', type, v => {
+    value(v);
+  });
   const max = getArgumentValue(args, 'max', type, v => {
-    if (typeof min !== 'undefined' && Number(v) < Number(min)) {
+    value(v);
+    if (typeof min !== 'undefined' && isAGreaterThanB(min, v)) {
       throw new Error('max should be equal or greater than min');
     }
   });
@@ -80,18 +87,44 @@ function createMinMaxValidation(
 
   const config = {};
   if (typeof min !== 'undefined' && typeof max !== 'undefined') {
-    config[`valueMin${type.toString()}`] = Number(min);
-    config[`valueMax${type.toString()}`] = Number(max);
+    config[configFields[0]] = value(min);
+    config[configFields[1]] = value(max);
     inputs.push({ type: 'RANGE', config, errorMessage });
   } else if (typeof min !== 'undefined') {
-    config[`valueMin${type.toString()}`] = Number(min);
+    config[configFields[0]] = value(min);
     inputs.push({ type: 'MIN_VALUE', config, errorMessage });
   } else {
-    config[`valueMax${type.toString()}`] = Number(max);
+    config[configFields[1]] = value(max);
     inputs.push({ type: 'MAX_VALUE', config, errorMessage });
   }
 
   return inputs;
+}
+
+function parseDate(value: string): DateType {
+  const date = new Date(value);
+  if (isNaN(date.getTime())) {
+    throw new Error('invalid date');
+  }
+
+  const dateString = date.toJSON();
+  if (value !== dateString.substring(0, dateString.indexOf('T'))) {
+    throw new Error('invalid date format, only accepts: YYYY-MM-DD');
+  }
+  return value;
+}
+
+function parseDateTime(value: string): DateTime {
+  const date = new Date(value);
+  if (isNaN(date.getTime())) {
+    throw new Error('invalid date');
+  }
+  if (value !== date.toJSON()) {
+    throw new Error(
+      'Invalid datetime format, only accepts: YYYY-MM-DDTHH:MM:SS.SSSZ'
+    );
+  }
+  return value;
 }
 
 module.exports = function createFieldValidationInputs(
@@ -115,15 +148,61 @@ module.exports = function createFieldValidationInputs(
           inputs.push(...createLengthValidation(field, directive));
           break;
         case 'Int':
-          inputs.push(...createMinMaxValidation(field, directive, GraphQLInt));
+          inputs.push(
+            ...createMinMaxValidation(
+              field,
+              directive,
+              GraphQLInt,
+              ['valueMinInt', 'valueMaxInt'],
+              v => parseInt(v),
+              (a, b) => parseInt(a) > parseInt(b)
+            )
+          );
           break;
         case 'Float':
           inputs.push(
-            ...createMinMaxValidation(field, directive, GraphQLFloat)
+            ...createMinMaxValidation(
+              field,
+              directive,
+              GraphQLFloat,
+              ['valueMinFloat', 'valueMaxFloat'],
+              v => parseFloat(v),
+              (a, b) => parseFloat(a) > parseFloat(b)
+            )
           );
           break;
         case 'Date':
+          inputs.push(
+            ...createMinMaxValidation(
+              field,
+              directive,
+              GraphQLString,
+              ['dateMin', 'dateMax'],
+              v => parseDate(String(v)),
+              (a, b) => {
+                const ad = new Date(String(a));
+                const bd = new Date(String(b));
+                return ad.getTime() > bd.getTime();
+              }
+            )
+          );
+          break;
         case 'DateTime':
+          inputs.push(
+            ...createMinMaxValidation(
+              field,
+              directive,
+              GraphQLString,
+              ['dateTimeMin', 'dateTimeMax'],
+              v => parseDateTime(String(v)),
+              (a, b) => {
+                const ad = new Date(String(a));
+                const bd = new Date(String(b));
+                return ad.getTime() > bd.getTime();
+              }
+            )
+          );
+          break;
         case 'File':
         case 'Audio':
         case 'Image':
