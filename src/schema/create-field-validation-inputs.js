@@ -127,6 +127,36 @@ function parseDateTime(value: string): DateTime {
   return value;
 }
 
+function createPatternValidation(
+  field: FieldDefinitionNode,
+  directive: DirectiveNode
+): Array<FieldValidationInput> {
+  const inputs: Array<FieldValidationInput> = [];
+
+  const { arguments: args = [] } = directive;
+  const pattern = getArgumentValue(args, 'pattern', GraphQLString, v => {
+    if (String(v).trim() === '') {
+      throw new Error('pattern should not be empty');
+    }
+
+    new RegExp(String(v)); // validate regexp
+  });
+  const errorMessage = getArgumentValue(
+    args,
+    'errorMessage',
+    GraphQLString,
+    () => {}
+  );
+  if (pattern) {
+    inputs.push({
+      type: 'PATTERN',
+      config: { pattern: String(pattern) },
+      errorMessage: errorMessage,
+    });
+  }
+  return inputs;
+}
+
 module.exports = function createFieldValidationInputs(
   field: FieldDefinitionNode
 ): Array<FieldValidationInput> {
@@ -146,6 +176,7 @@ module.exports = function createFieldValidationInputs(
         case 'MultilineText':
         case 'RichText':
           inputs.push(...createLengthValidation(field, directive));
+          inputs.push(...createPatternValidation(field, directive));
           break;
         case 'Int':
           inputs.push(

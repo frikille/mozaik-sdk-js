@@ -165,6 +165,86 @@ const lengthValidation = fieldType => {
   });
 };
 
+const patternValidation = fieldType => {
+  it('parses the pattern correctly', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(pattern: "[a-z]+", errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+
+    const expected = [
+      {
+        type: 'PATTERN',
+        config: { pattern: '[a-z]+' },
+        errorMessage: 'test err',
+      },
+    ];
+
+    expect(createFieldValidationInputs(field)).toEqual(expected);
+  });
+
+  it('returns an empty array if pattern is not set', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+
+    expect(createFieldValidationInputs(field)).toEqual([]);
+  });
+
+  it('throws an error if pattern is empty', () => {
+    const paddedFieldType = fieldType.padStart(18);
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${paddedFieldType} @validation(pattern: "", errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(() => createFieldValidationInputs(field)).toThrow({
+      message: 'pattern should not be empty',
+      locations: [{ line: 3, column: 56 }],
+    });
+  });
+
+  it('throws an error if pattern has the wrong type', () => {
+    const paddedFieldType = fieldType.padStart(18);
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${paddedFieldType} @validation(pattern: 5, errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(() => createFieldValidationInputs(field)).toThrow({
+      message: 'was expecting String',
+      locations: [{ line: 3, column: 56 }],
+    });
+  });
+
+  it('throws an error if pattern is not a valid regexp', () => {
+    const paddedFieldType = fieldType.padStart(18);
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${paddedFieldType} @validation(pattern: "[a-z", errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(() => createFieldValidationInputs(field)).toThrow({
+      message:
+        'Invalid regular expression: /[a-z/: Unterminated character class',
+      locations: [{ line: 3, column: 56 }],
+    });
+  });
+};
+
 describe('createFieldValidationInputs function', () => {
   describe('length validation on ID field', () => lengthValidation('ID'));
 
@@ -179,6 +259,20 @@ describe('createFieldValidationInputs function', () => {
 
   describe('length validation on RichText field', () =>
     lengthValidation('RichText'));
+
+  describe('pattern validation on ID field', () => patternValidation('ID'));
+
+  describe('pattern validation on String field', () =>
+    patternValidation('String'));
+
+  describe('pattern validation on SinglelineText field', () =>
+    patternValidation('SinglelineText'));
+
+  describe('pattern validation on MultilineText field', () =>
+    patternValidation('MultilineText'));
+
+  describe('pattern validation on RichText field', () =>
+    patternValidation('RichText'));
 
   describe('min/max validation on Int field', () => {
     it('parses the min value validation correctly', () => {
