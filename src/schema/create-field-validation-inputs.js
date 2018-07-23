@@ -7,6 +7,37 @@ const getFieldType = require('./get-field-type.js');
 const { GraphQLInt, GraphQLFloat, GraphQLString } = require('graphql');
 import type { DateType, DateTime } from '../../index.js';
 
+function createValidationFunc(
+  argName: string,
+  argType: GraphQLInputType,
+  validationType: string,
+  configKey: string,
+  value: mixed => mixed,
+  validator: mixed => void
+): (
+  field: FieldDefinitionNode,
+  directive: DirectiveNode
+) => Array<FieldValidationInput> {
+  return function(field: FieldDefinitionNode, directive: DirectiveNode) {
+    const inputs: Array<FieldValidationInput> = [];
+
+    const { arguments: args = [] } = directive;
+    const argValue = getArgumentValue(args, argName, argType, validator);
+    const errorMessage = getArgumentValue(
+      args,
+      'errorMessage',
+      GraphQLString,
+      () => {}
+    );
+    if (typeof argValue !== 'undefined') {
+      const config = {};
+      config[configKey] = value(argValue);
+      inputs.push({ type: validationType, config, errorMessage });
+    }
+    return inputs;
+  };
+}
+
 function createLengthValidation(
   field: FieldDefinitionNode,
   directive: DirectiveNode
@@ -128,149 +159,71 @@ function parseDateTime(value: string): DateTime {
   return value;
 }
 
-function createPatternValidation(
-  field: FieldDefinitionNode,
-  directive: DirectiveNode
-): Array<FieldValidationInput> {
-  const inputs: Array<FieldValidationInput> = [];
-
-  const { arguments: args = [] } = directive;
-  const pattern = getArgumentValue(args, 'pattern', GraphQLString, v => {
+const createPatternValidation = createValidationFunc(
+  'pattern',
+  GraphQLString,
+  'PATTERN',
+  'pattern',
+  v => String(v),
+  v => {
     if (String(v).trim() === '') {
       throw new Error('pattern should not be empty');
     }
-
     new RegExp(String(v)); // validate regexp
-  });
-  const errorMessage = getArgumentValue(
-    args,
-    'errorMessage',
-    GraphQLString,
-    () => {}
-  );
-  if (pattern) {
-    inputs.push({
-      type: 'PATTERN',
-      config: { pattern: String(pattern) },
-      errorMessage: errorMessage,
-    });
   }
-  return inputs;
-}
+);
 
-// TODO: replace these with min/max validation when the API supports it
-function createImageMaxWidthValidation(
-  field: FieldDefinitionNode,
-  directive: DirectiveNode
-): Array<FieldValidationInput> {
-  const inputs: Array<FieldValidationInput> = [];
-
-  const { arguments: args = [] } = directive;
-  const maxWidth = getArgumentValue(args, 'maxWidth', GraphQLInt, v => {
+const createImageMaxWidthValidation = createValidationFunc(
+  'maxWidth',
+  GraphQLInt,
+  'IMAGE_WIDTH',
+  'imageWidth',
+  v => parseInt(v),
+  v => {
     if (parseInt(v) <= 0) {
       throw new Error('was expecting a positive integer');
     }
-  });
-  const errorMessage = getArgumentValue(
-    args,
-    'errorMessage',
-    GraphQLString,
-    () => {}
-  );
-  if (typeof maxWidth !== 'undefined') {
-    inputs.push({
-      type: 'IMAGE_WIDTH',
-      config: { imageWidth: parseInt(maxWidth) },
-      errorMessage: errorMessage,
-    });
   }
-  return inputs;
-}
+);
 
-// TODO: replace these with min/max validation when the API supports it
-function createImageMaxHeightValidation(
-  field: FieldDefinitionNode,
-  directive: DirectiveNode
-): Array<FieldValidationInput> {
-  const inputs: Array<FieldValidationInput> = [];
-
-  const { arguments: args = [] } = directive;
-  const maxHeight = getArgumentValue(args, 'maxHeight', GraphQLInt, v => {
+const createImageMaxHeightValidation = createValidationFunc(
+  'maxHeight',
+  GraphQLInt,
+  'IMAGE_HEIGHT',
+  'imageHeight',
+  v => parseInt(v),
+  v => {
     if (parseInt(v) <= 0) {
       throw new Error('was expecting a positive integer');
     }
-  });
-  const errorMessage = getArgumentValue(
-    args,
-    'errorMessage',
-    GraphQLString,
-    () => {}
-  );
-  if (typeof maxHeight !== 'undefined') {
-    inputs.push({
-      type: 'IMAGE_HEIGHT',
-      config: { imageHeight: parseInt(maxHeight) },
-      errorMessage: errorMessage,
-    });
   }
-  return inputs;
-}
+);
 
-function createMaxSizeValidation(
-  field: FieldDefinitionNode,
-  directive: DirectiveNode
-): Array<FieldValidationInput> {
-  const inputs: Array<FieldValidationInput> = [];
-
-  const { arguments: args = [] } = directive;
-  const maxSize = getArgumentValue(args, 'maxSize', GraphQLInt, v => {
+const createMaxSizeValidation = createValidationFunc(
+  'maxSize',
+  GraphQLInt,
+  'MAX_FILE_SIZE',
+  'maxFileSize',
+  v => parseInt(v),
+  v => {
     if (parseInt(v) <= 0) {
       throw new Error('was expecting a positive integer');
     }
-  });
-  const errorMessage = getArgumentValue(
-    args,
-    'errorMessage',
-    GraphQLString,
-    () => {}
-  );
-  if (typeof maxSize !== 'undefined') {
-    inputs.push({
-      type: 'MAX_FILE_SIZE',
-      config: { maxFileSize: parseInt(maxSize) },
-      errorMessage: errorMessage,
-    });
   }
-  return inputs;
-}
+);
 
-function createFileTypeValidation(
-  field: FieldDefinitionNode,
-  directive: DirectiveNode
-): Array<FieldValidationInput> {
-  const inputs: Array<FieldValidationInput> = [];
-
-  const { arguments: args = [] } = directive;
-  const fileType = getArgumentValue(args, 'fileType', GraphQLString, v => {
+const createFileTypeValidation = createValidationFunc(
+  'fileType',
+  GraphQLString,
+  'FILE_TYPE',
+  'fileType',
+  v => String(v),
+  v => {
     if (v === '') {
       throw new Error('file type can not be empty');
     }
-  });
-  const errorMessage = getArgumentValue(
-    args,
-    'errorMessage',
-    GraphQLString,
-    () => {}
-  );
-  if (fileType) {
-    inputs.push({
-      type: 'FILE_TYPE',
-      config: { fileType: String(fileType) },
-      errorMessage: errorMessage,
-    });
   }
-  return inputs;
-}
+);
 
 module.exports = function createFieldValidationInputs(
   field: FieldDefinitionNode
