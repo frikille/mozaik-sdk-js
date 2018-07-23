@@ -58,6 +58,7 @@ function createMinMaxValidation(
   field: FieldDefinitionNode,
   directive: DirectiveNode,
   type: GraphQLInputType,
+  minMaxFields: Array<string>,
   configFields: Array<string>,
   value: mixed => mixed,
   isAGreaterThanB: (a: mixed, b: mixed) => boolean
@@ -65,10 +66,10 @@ function createMinMaxValidation(
   const inputs: Array<FieldValidationInput> = [];
 
   const { arguments: args = [] } = directive;
-  const min = getArgumentValue(args, 'min', type, v => {
+  const min = getArgumentValue(args, minMaxFields[0], type, v => {
     value(v);
   });
-  const max = getArgumentValue(args, 'max', type, v => {
+  const max = getArgumentValue(args, minMaxFields[1], type, v => {
     value(v);
     if (typeof min !== 'undefined' && isAGreaterThanB(min, v)) {
       throw new Error('max should be equal or greater than min');
@@ -298,6 +299,7 @@ module.exports = function createFieldValidationInputs(
               field,
               directive,
               GraphQLInt,
+              ['min', 'max'],
               ['valueMinInt', 'valueMaxInt'],
               v => parseInt(v),
               (a, b) => parseInt(a) > parseInt(b)
@@ -310,6 +312,7 @@ module.exports = function createFieldValidationInputs(
               field,
               directive,
               GraphQLFloat,
+              ['min', 'max'],
               ['valueMinFloat', 'valueMaxFloat'],
               v => parseFloat(v),
               (a, b) => parseFloat(a) > parseFloat(b)
@@ -322,6 +325,7 @@ module.exports = function createFieldValidationInputs(
               field,
               directive,
               GraphQLString,
+              ['min', 'max'],
               ['dateMin', 'dateMax'],
               v => parseDate(String(v)),
               (a, b) => {
@@ -338,6 +342,7 @@ module.exports = function createFieldValidationInputs(
               field,
               directive,
               GraphQLString,
+              ['min', 'max'],
               ['dateTimeMin', 'dateTimeMax'],
               v => parseDateTime(String(v)),
               (a, b) => {
