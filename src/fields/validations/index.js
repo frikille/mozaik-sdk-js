@@ -1,6 +1,8 @@
 // @flow
 const createValidationInput = require('./create/index.js');
 
+import type { DateType as Date, DateTime } from '../index.js';
+
 export type FieldValidationConfigInput = {
   lengthMin: number,
   lengthMax: number,
@@ -8,10 +10,10 @@ export type FieldValidationConfigInput = {
   valueMaxInt: number,
   valueMinFloat: number,
   valueMaxFloat: number,
-  dateMin: string,
-  dateMax: string,
-  dateTimeMin: string,
-  dateTimeMax: string,
+  dateMin: Date,
+  dateMax: Date,
+  dateTimeMin: DateTime,
+  dateTimeMax: DateTime,
   pattern: string,
   imageWidth: number,
   imageHeight: number,
