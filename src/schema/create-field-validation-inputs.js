@@ -215,6 +215,62 @@ function createImageMaxHeightValidation(
   return inputs;
 }
 
+function createMaxSizeValidation(
+  field: FieldDefinitionNode,
+  directive: DirectiveNode
+): Array<FieldValidationInput> {
+  const inputs: Array<FieldValidationInput> = [];
+
+  const { arguments: args = [] } = directive;
+  const maxSize = getArgumentValue(args, 'maxSize', GraphQLInt, v => {
+    if (parseInt(v) <= 0) {
+      throw new Error('was expecting a positive integer');
+    }
+  });
+  const errorMessage = getArgumentValue(
+    args,
+    'errorMessage',
+    GraphQLString,
+    () => {}
+  );
+  if (typeof maxSize !== 'undefined') {
+    inputs.push({
+      type: 'MAX_FILE_SIZE',
+      config: { maxFileSize: parseInt(maxSize) },
+      errorMessage: errorMessage,
+    });
+  }
+  return inputs;
+}
+
+function createFileTypeValidation(
+  field: FieldDefinitionNode,
+  directive: DirectiveNode
+): Array<FieldValidationInput> {
+  const inputs: Array<FieldValidationInput> = [];
+
+  const { arguments: args = [] } = directive;
+  const fileType = getArgumentValue(args, 'fileType', GraphQLString, v => {
+    if (v === '') {
+      throw new Error('file type can not be empty');
+    }
+  });
+  const errorMessage = getArgumentValue(
+    args,
+    'errorMessage',
+    GraphQLString,
+    () => {}
+  );
+  if (fileType) {
+    inputs.push({
+      type: 'FILE_TYPE',
+      config: { fileType: String(fileType) },
+      errorMessage: errorMessage,
+    });
+  }
+  return inputs;
+}
+
 module.exports = function createFieldValidationInputs(
   field: FieldDefinitionNode
 ): Array<FieldValidationInput> {
@@ -292,13 +348,17 @@ module.exports = function createFieldValidationInputs(
             )
           );
           break;
+
+        case 'Image':
+          // TODO: replace these with min/max validation when the API supports it
+          inputs.push(...createImageMaxWidthValidation(field, directive));
+          inputs.push(...createImageMaxHeightValidation(field, directive));
+        // falls through
         case 'File':
         case 'Audio':
         case 'Video':
-          break;
-        case 'Image':
-          inputs.push(...createImageMaxWidthValidation(field, directive));
-          inputs.push(...createImageMaxHeightValidation(field, directive));
+          inputs.push(...createMaxSizeValidation(field, directive));
+          inputs.push(...createFileTypeValidation(field, directive));
           break;
       }
     }

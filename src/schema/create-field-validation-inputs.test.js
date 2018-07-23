@@ -245,6 +245,134 @@ const patternValidation = fieldType => {
   });
 };
 
+const fileTypeValidation = fieldType => {
+  it('parses the fileType correctly', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(fileType: "pdf", errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+
+    const expected = [
+      {
+        type: 'FILE_TYPE',
+        config: { fileType: 'pdf' },
+        errorMessage: 'test err',
+      },
+    ];
+
+    expect(createFieldValidationInputs(field)).toEqual(expected);
+  });
+
+  it('returns an empty array if fileType is not set', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+
+    expect(createFieldValidationInputs(field)).toEqual([]);
+  });
+
+  it('throws an error if fileType is empty', () => {
+    const paddedFieldType = fieldType.padStart(18);
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${paddedFieldType} @validation(fileType: "", errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(() => createFieldValidationInputs(field)).toThrow({
+      message: 'file type can not be empty',
+      locations: [{ line: 3, column: 57 }],
+    });
+  });
+
+  it('throws an error if fileType has the wrong type', () => {
+    const paddedFieldType = fieldType.padStart(18);
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${paddedFieldType} @validation(fileType: 5, errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(() => createFieldValidationInputs(field)).toThrow({
+      message: 'was expecting String',
+      locations: [{ line: 3, column: 57 }],
+    });
+  });
+};
+
+const maxFileSizeValidation = fieldType => {
+  it('parses the max file size correctly', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(maxSize: 100, errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+
+    const expected = [
+      {
+        type: 'MAX_FILE_SIZE',
+        config: { maxFileSize: 100 },
+        errorMessage: 'test err',
+      },
+    ];
+
+    expect(createFieldValidationInputs(field)).toEqual(expected);
+  });
+
+  it('returns an empty array if maxSize is not set', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+
+    expect(createFieldValidationInputs(field)).toEqual([]);
+  });
+
+  it('throws an error if maxSize has the wrong type', () => {
+    const paddedFieldType = fieldType.padStart(18);
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${paddedFieldType} @validation(maxSize: "not a number", errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(() => createFieldValidationInputs(field)).toThrow({
+      message: 'was expecting Int',
+      locations: [{ line: 3, column: 56 }],
+    });
+  });
+
+  it('throws an error if maxSize is not a positive integer', () => {
+    const paddedFieldType = fieldType.padStart(18);
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${paddedFieldType} @validation(maxSize: 0, errorMessage: "test err")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(() => createFieldValidationInputs(field)).toThrow({
+      message: 'was expecting a positive integer',
+      locations: [{ line: 3, column: 56 }],
+    });
+  });
+};
+
 describe('createFieldValidationInputs function', () => {
   describe('length validation on ID field', () => lengthValidation('ID'));
 
@@ -273,6 +401,30 @@ describe('createFieldValidationInputs function', () => {
 
   describe('pattern validation on RichText field', () =>
     patternValidation('RichText'));
+
+  describe('file type validation on Image field', () =>
+    fileTypeValidation('Image'));
+
+  describe('file type validation on Video field', () =>
+    fileTypeValidation('Video'));
+
+  describe('file type validation on Audio field', () =>
+    fileTypeValidation('Audio'));
+
+  describe('file type validation on File field', () =>
+    fileTypeValidation('File'));
+
+  describe('max file size validation on Image field', () =>
+    maxFileSizeValidation('Image'));
+
+  describe('max file size validation on Video field', () =>
+    maxFileSizeValidation('Video'));
+
+  describe('max file size validation on Audio field', () =>
+    maxFileSizeValidation('Audio'));
+
+  describe('max file size validation on File field', () =>
+    maxFileSizeValidation('File'));
 
   describe('min/max validation on Int field', () => {
     it('parses the min value validation correctly', () => {

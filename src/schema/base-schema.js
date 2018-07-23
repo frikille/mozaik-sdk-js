@@ -43,7 +43,7 @@ directive @validation(
   minHeight: Int,
   maxHeight: Int,
   maxSize: Int,
-  filetype: String,
+  fileType: String,
   errorMessage: String
 ) on FIELD_DEFINITION
 `;
