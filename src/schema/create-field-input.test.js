@@ -13,10 +13,11 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'twitter',
+        label: 'Twitter',
         apiId: 'twitter',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -37,10 +38,11 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[1].fields[0];
 
       const output = {
-        label: 'post',
+        label: 'Post',
         apiId: 'post',
         type: 'FEATURED_POST',
         hasMultipleValues: false,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -58,10 +60,11 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'tags',
+        label: 'Tags',
         apiId: 'tags',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: true,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -69,19 +72,30 @@ describe('createFieldInput function', () => {
   });
 
   describe('NonNullType', () => {
-    it('throws an error', () => {
+    it('returns the correct FieldInput object', () => {
       const schema = `
         type Object implements SimpleContentType {
-          mandatoryField: String!
+          twitter: SinglelineText!
         }
       `;
       const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0].fields[0];
 
-      expect(() => createFieldInput(input)).toThrow({
-        message: 'non-null fields are not supported',
-        locations: [{ line: 3, column: 27 }],
-      });
+      const output = {
+        label: 'Twitter',
+        apiId: 'twitter',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        validations: [
+          {
+            config: {},
+            errorMessage: 'this field is required',
+            type: 'REQUIRED',
+          },
+        ],
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
     });
   });
 
@@ -100,10 +114,11 @@ describe('createFieldInput function', () => {
     const input = simpleContentTypes[0].fields[1];
 
     const output = {
-      label: 'comments',
+      label: 'Comments',
       apiId: 'comments',
       type: 'FEATURED_POST_COMMENT',
       hasMultipleValues: true,
+      validations: [],
     };
 
     expect(createFieldInput(input)).toEqual(output);
@@ -113,18 +128,19 @@ describe('createFieldInput function', () => {
     it('correctly parses the group name', () => {
       const schema = `
         type Object implements SimpleContentType {
-          field1: SinglelineText @config(groupName: "foo")
+          field: SinglelineText @config(groupName: "foo")
         }
       `;
       const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'field1',
-        apiId: 'field1',
+        label: 'Field',
+        apiId: 'field',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         groupName: 'foo',
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -174,11 +190,12 @@ describe('createFieldInput function', () => {
       const input = simpleContentTypes[0].fields[0];
 
       const output = {
-        label: 'myTitle',
+        label: 'My title',
         apiId: 'myTitle',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         includeInDisplayName: true,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -213,6 +230,174 @@ describe('createFieldInput function', () => {
           'isTitle flag is only valid on String, ID, SinglelineText fields',
         locations: [{ line: 3, column: 20 }],
       });
+    });
+  });
+
+  describe('Field with label', () => {
+    it('should set the label parameter', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText @config(label: "My test field")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'My test field',
+        apiId: 'myField',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        validations: [],
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
+    });
+
+    it('the first letter of the lable should be capitalised', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText @config(label: "my test field")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'My test field',
+        apiId: 'myField',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        validations: [],
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
+    });
+
+    it('should throw an error if not string', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText @config(label: 42)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'was expecting String',
+        locations: [{ line: 3, column: 50 }],
+      });
+    });
+  });
+
+  describe('Field without label', () => {
+    it('should convert the api id correctly to a label', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText
+          myCMSField: SinglelineText
+          my_field: SinglelineText
+          myField1: SinglelineText
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields;
+      const output = [
+        {
+          label: 'My field',
+          apiId: 'myField',
+          type: 'TEXT_SINGLELINE',
+          hasMultipleValues: false,
+          validations: [],
+        },
+        {
+          label: 'My CMS field',
+          apiId: 'myCMSField',
+          type: 'TEXT_SINGLELINE',
+          hasMultipleValues: false,
+          validations: [],
+        },
+        {
+          label: 'My field',
+          apiId: 'my_field',
+          type: 'TEXT_SINGLELINE',
+          hasMultipleValues: false,
+          validations: [],
+        },
+        {
+          label: 'My field 1',
+          apiId: 'myField1',
+          type: 'TEXT_SINGLELINE',
+          hasMultipleValues: false,
+          validations: [],
+        },
+      ];
+
+      for (let i = 0; i < output.length; i++) {
+        expect(createFieldInput(input[i])).toEqual(output[i]);
+      }
+    });
+  });
+
+  describe('Field with description', () => {
+    it('should set the description parameter', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText @config(description: "My test field")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'My field',
+        apiId: 'myField',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        description: 'My test field',
+        validations: [],
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
+    });
+
+    it('should throw an error if not string', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          myField: SinglelineText @config(description: 42)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(() => createFieldInput(input)).toThrow({
+        message: 'was expecting String',
+        locations: [{ line: 3, column: 56 }],
+      });
+    });
+  });
+
+  describe('Field with validation', () => {
+    it('correctly parses the validation configs', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: SinglelineText @validation(minLength: 5, errorMessage: "err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'Field',
+        apiId: 'field',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        validations: [
+          { config: { lengthMin: 5 }, errorMessage: 'err', type: 'MIN_LENGTH' },
+        ],
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
     });
   });
 });

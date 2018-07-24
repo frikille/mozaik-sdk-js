@@ -3,6 +3,9 @@ import type { FieldDefinitionNode } from 'graphql/language/ast';
 import type { FieldInput } from '../fields/create/index.js';
 const { GraphQLError, GraphQLString, GraphQLBoolean } = require('graphql');
 const getDirectiveValue = require('./get-directive-value.js');
+const generateLabel = require('./generate-label.js');
+const getFieldType = require('./get-field-type.js');
+const createFieldValidationInputs = require('./create-field-validation-inputs.js');
 
 const typeMapping = new Map([
   ['String', 'TEXT_SINGLELINE'],
@@ -40,27 +43,18 @@ const reservedFieldNames = [
   'latestPublishDate',
 ];
 
-type FieldOptions = {
-  type: string,
-  hasMultipleValues: boolean,
-};
+function setDescription(definition: FieldDefinitionNode, input: FieldInput) {
+  const { directives = [] } = definition;
+  const description = getDirectiveValue(
+    directives,
+    'config',
+    'description',
+    GraphQLString,
+    () => {}
+  );
 
-function getFieldType(type): FieldOptions {
-  switch (type.kind) {
-    case 'NamedType':
-      return {
-        type: type.name.value,
-        hasMultipleValues: false,
-      };
-    case 'ListType':
-      return {
-        type: getFieldType(type.type).type,
-        hasMultipleValues: true,
-      };
-    case 'NonNullType':
-      throw new GraphQLError('non-null fields are not supported', type);
-    default:
-      throw new GraphQLError(`unknown field type: ${type.kind}`, type);
+  if (description) {
+    input.description = String(description);
   }
 }
 
@@ -81,6 +75,29 @@ function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
   if (groupName) {
     input.groupName = String(groupName);
   }
+}
+
+function getLabel(definition: FieldDefinitionNode): string {
+  const { name, directives = [] } = definition;
+  let label = getDirectiveValue(
+    directives,
+    'config',
+    'label',
+    GraphQLString,
+    v => {
+      if (v === '') {
+        throw new Error('label can not be empty');
+      }
+    }
+  );
+
+  if (label) {
+    label = String(label);
+  } else {
+    label = generateLabel(name.value);
+  }
+
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 function setIncludeInDisplayName(
@@ -127,20 +144,22 @@ module.exports = function createFieldInput(
       .toUpperCase();
   }
 
-  const input: FieldInput = {
-    label: name.value,
-    apiId: name.value,
-    type: mozaikType,
-    hasMultipleValues: graphqlType.hasMultipleValues,
-  };
-
-  if (reservedFieldNames.includes(input.apiId)) {
+  if (reservedFieldNames.includes(name.value)) {
     throw new GraphQLError(
-      `${input.apiId} is a reserved field name`,
+      `${name.value} is a reserved field name`,
       definition
     );
   }
 
+  const input: FieldInput = {
+    label: getLabel(definition),
+    apiId: name.value,
+    type: mozaikType,
+    hasMultipleValues: graphqlType.hasMultipleValues,
+    validations: createFieldValidationInputs(definition),
+  };
+
+  setDescription(definition, input);
   setGroupName(definition, input);
   setIncludeInDisplayName(definition, input);
 

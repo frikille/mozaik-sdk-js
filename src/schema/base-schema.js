@@ -10,8 +10,7 @@ scalar Image
 scalar Video
 
 directive @config(label: String!) on ENUM_VALUE
-directive @config(groupName: String!, isTitle: Boolean) on FIELD_DEFINITION
-#directive @validation(validations: [Validation]) on FIELD_DEFINITION
+directive @config(label: String!, description: String, groupName: String!, isTitle: Boolean) on FIELD_DEFINITION
 
 interface SimpleContentType {
   id: String
@@ -30,6 +29,23 @@ interface EmbeddableContentType {
 interface HashmapContentType {
   id: String
 }
+
+union MinMaxValue = Int | Float | String
+
+directive @validation(
+  minLength: Int,
+  maxLength: Int,
+  min: MinMaxValue,
+  max: MinMaxValue,
+  pattern: String,
+  minWidth: Int,
+  maxWidth: Int,
+  minHeight: Int,
+  maxHeight: Int,
+  maxSize: Int,
+  fileType: String,
+  errorMessage: String
+) on FIELD_DEFINITION
 `;
 
 module.exports = schema;

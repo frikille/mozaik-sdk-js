@@ -1,4 +1,7 @@
 // @flow
+
+import type { FieldValidationInput } from '../validations/create/index.js';
+
 const MozaikAPI = require('../../api');
 
 export type FieldInput = {
@@ -10,6 +13,8 @@ export type FieldInput = {
   includeInDisplayName?: boolean,
   position?: number,
   groupName?: string,
+  description?: string,
+  validations?: Array<FieldValidationInput>,
 };
 
 const createFieldMutation = `
