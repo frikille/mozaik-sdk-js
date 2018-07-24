@@ -62,6 +62,27 @@ const lengthValidation = fieldType => {
     expect(createFieldValidationInputs(field)).toEqual(expected);
   });
 
+  it('generates a default error message ', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field1: ${fieldType} @validation(minLength: 5)
+        field2: ${fieldType} @validation(maxLength: 10)
+        field3: ${fieldType} @validation(minLength: 5, maxLength: 10)
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const fields = simpleContentTypes[0].fields;
+    expect(createFieldValidationInputs(fields[0])[0].errorMessage).toEqual(
+      'should be at least 5 characters long'
+    );
+    expect(createFieldValidationInputs(fields[1])[0].errorMessage).toEqual(
+      'should be maximum 10 characters long'
+    );
+    expect(createFieldValidationInputs(fields[2])[0].errorMessage).toEqual(
+      'should have a length between 5 and 10 characters'
+    );
+  });
+
   it('allows the same min/max length values', () => {
     const schema = `
       type Object implements SimpleContentType {
@@ -186,6 +207,19 @@ const patternValidation = fieldType => {
     expect(createFieldValidationInputs(field)).toEqual(expected);
   });
 
+  it('generates a default error message', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(pattern: "[a-z]+")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(createFieldValidationInputs(field)[0].errorMessage).toEqual(
+      'should match [a-z]+'
+    );
+  });
+
   it('returns an empty array if pattern is not set', () => {
     const schema = `
       type Object implements SimpleContentType {
@@ -266,6 +300,19 @@ const fileTypeValidation = fieldType => {
     expect(createFieldValidationInputs(field)).toEqual(expected);
   });
 
+  it('generates a default error message', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(fileType: "pdf")
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(createFieldValidationInputs(field)[0].errorMessage).toEqual(
+      'invalid file type, it should be pdf'
+    );
+  });
+
   it('returns an empty array if fileType is not set', () => {
     const schema = `
       type Object implements SimpleContentType {
@@ -328,6 +375,19 @@ const maxFileSizeValidation = fieldType => {
     ];
 
     expect(createFieldValidationInputs(field)).toEqual(expected);
+  });
+
+  it('generates a default error message', () => {
+    const schema = `
+      type Object implements SimpleContentType {
+        field: ${fieldType} @validation(maxSize: 100)
+      }
+    `;
+    const { simpleContentTypes } = parse(schema);
+    const field = simpleContentTypes[0].fields[0];
+    expect(createFieldValidationInputs(field)[0].errorMessage).toEqual(
+      'the file size should not exceed 100 kB'
+    );
   });
 
   it('returns an empty array if maxSize is not set', () => {
@@ -485,6 +545,27 @@ describe('createFieldValidationInputs function', () => {
       ];
 
       expect(createFieldValidationInputs(field)).toEqual(expected);
+    });
+
+    it('generates a default error message ', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field1: Int @validation(min: 5)
+          field2: Int @validation(max: 10)
+          field3: Int @validation(min: 5, max: 10)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const fields = simpleContentTypes[0].fields;
+      expect(createFieldValidationInputs(fields[0])[0].errorMessage).toEqual(
+        'should be greater than or equal to 5'
+      );
+      expect(createFieldValidationInputs(fields[1])[0].errorMessage).toEqual(
+        'should be less than or equal to 10'
+      );
+      expect(createFieldValidationInputs(fields[2])[0].errorMessage).toEqual(
+        'should be between 5 and 10'
+      );
     });
 
     it('allows the same min/max value', () => {
@@ -648,6 +729,27 @@ describe('createFieldValidationInputs function', () => {
       expect(createFieldValidationInputs(field)).toEqual(expected);
     });
 
+    it('generates a default error message ', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field1: Float @validation(min: 5.1)
+          field2: Float @validation(max: 10.1)
+          field3: Float @validation(min: 5.1, max: 10.1)
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const fields = simpleContentTypes[0].fields;
+      expect(createFieldValidationInputs(fields[0])[0].errorMessage).toEqual(
+        'should be greater than or equal to 5.1'
+      );
+      expect(createFieldValidationInputs(fields[1])[0].errorMessage).toEqual(
+        'should be less than or equal to 10.1'
+      );
+      expect(createFieldValidationInputs(fields[2])[0].errorMessage).toEqual(
+        'should be between 5.1 and 10.1'
+      );
+    });
+
     it('allows the same min/max value', () => {
       const schema = `
         type Object implements SimpleContentType {
@@ -807,6 +909,27 @@ describe('createFieldValidationInputs function', () => {
       ];
 
       expect(createFieldValidationInputs(field)).toEqual(expected);
+    });
+
+    it('generates a default error message ', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field1: Date @validation(min: "1985-10-26")
+          field2: Date @validation(max: "2015-10-21")
+          field3: Date @validation(min: "1985-10-26", max: "2015-10-21")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const fields = simpleContentTypes[0].fields;
+      expect(createFieldValidationInputs(fields[0])[0].errorMessage).toEqual(
+        'should be greater than or equal to 1985-10-26'
+      );
+      expect(createFieldValidationInputs(fields[1])[0].errorMessage).toEqual(
+        'should be less than or equal to 2015-10-21'
+      );
+      expect(createFieldValidationInputs(fields[2])[0].errorMessage).toEqual(
+        'should be between 1985-10-26 and 2015-10-21'
+      );
     });
 
     it('allows the same min/max value', () => {
@@ -999,6 +1122,27 @@ describe('createFieldValidationInputs function', () => {
       ];
 
       expect(createFieldValidationInputs(field)).toEqual(expected);
+    });
+
+    it('generates a default error message ', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field1: DateTime @validation(min: "1985-10-26T09:00:00.000Z")
+          field2: DateTime @validation(max: "2015-10-21T07:28:00.000Z")
+          field3: DateTime @validation(min: "1985-10-26T09:00:00.000Z", max: "2015-10-21T07:28:00.000Z")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const fields = simpleContentTypes[0].fields;
+      expect(createFieldValidationInputs(fields[0])[0].errorMessage).toEqual(
+        'should be greater than or equal to 1985-10-26T09:00:00.000Z'
+      );
+      expect(createFieldValidationInputs(fields[1])[0].errorMessage).toEqual(
+        'should be less than or equal to 2015-10-21T07:28:00.000Z'
+      );
+      expect(createFieldValidationInputs(fields[2])[0].errorMessage).toEqual(
+        'should be between 1985-10-26T09:00:00.000Z and 2015-10-21T07:28:00.000Z'
+      );
     });
 
     it('allows the same min/max value', () => {

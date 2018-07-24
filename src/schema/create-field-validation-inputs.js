@@ -13,28 +13,33 @@ function createValidationFunc(
   validationType: string,
   configKey: string,
   value: mixed => mixed,
-  validator: mixed => void
+  validator: mixed => void,
+  defaultErrorMessage: mixed => string
 ): (
   field: FieldDefinitionNode,
   directive: DirectiveNode
 ) => Array<FieldValidationInput> {
   return function(field: FieldDefinitionNode, directive: DirectiveNode) {
-    const inputs: Array<FieldValidationInput> = [];
-
     const { arguments: args = [] } = directive;
     const argValue = getArgumentValue(args, argName, argType, validator);
-    const errorMessage = getArgumentValue(
+    if (typeof argValue === 'undefined') {
+      return [];
+    }
+
+    let errorMessage = getArgumentValue(
       args,
       'errorMessage',
       GraphQLString,
       () => {}
     );
-    if (typeof argValue !== 'undefined') {
-      const config = {};
-      config[configKey] = value(argValue);
-      inputs.push({ type: validationType, config, errorMessage });
+
+    if (!errorMessage) {
+      errorMessage = defaultErrorMessage(argValue);
     }
-    return inputs;
+    const config = {};
+    config[configKey] = value(argValue);
+
+    return [{ type: validationType, config, errorMessage }];
   };
 }
 
@@ -44,7 +49,8 @@ function createMinMaxValidationFunc(
   validationTypes: Array<string>,
   configKeys: Array<string>,
   value: mixed => mixed,
-  isAGreaterThanB: (a: mixed, b: mixed) => boolean
+  isAGreaterThanB: (a: mixed, b: mixed) => boolean,
+  defaultErrorMessage: (mixed, mixed) => string
 ): (
   field: FieldDefinitionNode,
   directive: DirectiveNode
@@ -64,15 +70,19 @@ function createMinMaxValidationFunc(
         );
       }
     });
-    const errorMessage = getArgumentValue(
+
+    if (typeof min === 'undefined' && typeof max === 'undefined') {
+      return [];
+    }
+
+    let errorMessage = getArgumentValue(
       args,
       'errorMessage',
       GraphQLString,
       () => {}
     );
-
-    if (typeof min === 'undefined' && typeof max === 'undefined') {
-      return [];
+    if (!errorMessage) {
+      errorMessage = defaultErrorMessage(min, max);
     }
 
     const config = {};
@@ -129,7 +139,8 @@ const createPatternValidation = createValidationFunc(
       throw new Error('pattern should not be empty');
     }
     new RegExp(String(v)); // validate regexp
-  }
+  },
+  v => `should match ${String(v)}`
 );
 
 const createImageMaxWidthValidation = createValidationFunc(
@@ -142,7 +153,8 @@ const createImageMaxWidthValidation = createValidationFunc(
     if (parseInt(v) <= 0) {
       throw new Error('was expecting a positive integer');
     }
-  }
+  },
+  v => `the maximum allowed image width is ${parseInt(v)}`
 );
 
 const createImageMaxHeightValidation = createValidationFunc(
@@ -155,7 +167,8 @@ const createImageMaxHeightValidation = createValidationFunc(
     if (parseInt(v) <= 0) {
       throw new Error('was expecting a positive integer');
     }
-  }
+  },
+  v => `the maximum allowed image height is ${parseInt(v)}`
 );
 
 const createMaxSizeValidation = createValidationFunc(
@@ -168,7 +181,8 @@ const createMaxSizeValidation = createValidationFunc(
     if (parseInt(v) <= 0) {
       throw new Error('was expecting a positive integer');
     }
-  }
+  },
+  v => `the file size should not exceed ${parseInt(v)} kB`
 );
 
 const createFileTypeValidation = createValidationFunc(
@@ -181,7 +195,8 @@ const createFileTypeValidation = createValidationFunc(
     if (v === '') {
       throw new Error('file type can not be empty');
     }
-  }
+  },
+  v => `invalid file type, it should be ${String(v)}`
 );
 
 const createLengthMinMaxValidation = createMinMaxValidationFunc(
@@ -190,8 +205,29 @@ const createLengthMinMaxValidation = createMinMaxValidationFunc(
   ['MIN_LENGTH', 'MAX_LENGTH', 'LENGTH_RANGE'],
   ['lengthMin', 'lengthMax'],
   v => parseInt(v),
-  (a, b) => parseInt(a) > parseInt(b)
+  (a, b) => parseInt(a) > parseInt(b),
+  (min, max) => {
+    if (typeof min !== 'undefined' && typeof max !== 'undefined') {
+      return `should have a length between ${parseInt(min)} and ${parseInt(
+        max
+      )} characters`;
+    } else if (typeof min !== 'undefined') {
+      return `should be at least ${parseInt(min)} characters long`;
+    } else {
+      return `should be maximum ${parseInt(max)} characters long`;
+    }
+  }
 );
+
+function minMaxValueErrorMessage(min, max) {
+  if (typeof min !== 'undefined' && typeof max !== 'undefined') {
+    return `should be between ${String(min)} and ${String(max)}`;
+  } else if (typeof min !== 'undefined') {
+    return `should be greater than or equal to ${String(min)}`;
+  } else {
+    return `should be less than or equal to ${String(max)}`;
+  }
+}
 
 const createIntMinMaxValidation = createMinMaxValidationFunc(
   ['min', 'max'],
@@ -199,7 +235,8 @@ const createIntMinMaxValidation = createMinMaxValidationFunc(
   ['MIN_VALUE', 'MAX_VALUE', 'VALUE_RANGE'],
   ['valueMinInt', 'valueMaxInt'],
   v => parseInt(v),
-  (a, b) => parseInt(a) > parseInt(b)
+  (a, b) => parseInt(a) > parseInt(b),
+  minMaxValueErrorMessage
 );
 
 const createFloatMinMaxValidation = createMinMaxValidationFunc(
@@ -208,7 +245,8 @@ const createFloatMinMaxValidation = createMinMaxValidationFunc(
   ['MIN_VALUE', 'MAX_VALUE', 'VALUE_RANGE'],
   ['valueMinFloat', 'valueMaxFloat'],
   v => parseFloat(v),
-  (a, b) => parseFloat(a) > parseFloat(b)
+  (a, b) => parseFloat(a) > parseFloat(b),
+  minMaxValueErrorMessage
 );
 
 const createDateMinMaxValidation = createMinMaxValidationFunc(
@@ -221,7 +259,8 @@ const createDateMinMaxValidation = createMinMaxValidationFunc(
     const ad = new Date(String(a));
     const bd = new Date(String(b));
     return ad.getTime() > bd.getTime();
-  }
+  },
+  minMaxValueErrorMessage
 );
 
 const createDateTimeMinMaxValidation = createMinMaxValidationFunc(
@@ -234,7 +273,8 @@ const createDateTimeMinMaxValidation = createMinMaxValidationFunc(
     const ad = new Date(String(a));
     const bd = new Date(String(b));
     return ad.getTime() > bd.getTime();
-  }
+  },
+  minMaxValueErrorMessage
 );
 
 module.exports = function createFieldValidationInputs(
