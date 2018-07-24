@@ -3,9 +3,11 @@
 import type { ContentType } from '../content-types/index.js';
 import type { ContentTypeInput } from '../content-types/create/index.js';
 import type { Field } from '../fields/index.js';
+import type { FieldValidation } from '../fields/validations/index.js';
 
 const createContentType = require('./../content-types/create/index.js');
 const createField = require('./../fields/create/index.js');
+const createFieldValidation = require('./../fields/validations/create/index.js');
 
 async function createContentTypes(
   contentTypeInputs: Array<ContentTypeInput>
@@ -65,8 +67,11 @@ async function createFields(contentType: ContentType): Promise<Array<Field>> {
 
       console.log(`Creating ${contentTypeApiId}.${apiId} field...`);
 
+      const fieldInputWithoutValidations = { ...fieldInput };
+      delete fieldInputWithoutValidations.validations;
+
       const apiResult = await createField({
-        field: fieldInput,
+        field: fieldInputWithoutValidations,
         contentTypeId,
       });
 
@@ -90,13 +95,68 @@ async function createFields(contentType: ContentType): Promise<Array<Field>> {
         );
       }
 
+      const field: Field = {
+        id: apiResult.data.createField.field.id,
+        ...fieldInput,
+      };
+
+      await createFieldValidations(contentType, field);
+
       console.log(
         `${contentTypeApiId}.${apiId} field was successfully created.`
       );
 
+      return field;
+    })
+  );
+}
+
+async function createFieldValidations(
+  contentType: ContentType,
+  field: Field
+): Promise<Array<FieldValidation>> {
+  const { apiId: contentTypeApiId } = contentType;
+  const { id: fieldId, apiId: fieldApiId, validations = [] } = field;
+  return await Promise.all(
+    validations.map(async fieldValidationInput => {
+      const { type } = fieldValidationInput;
+
+      console.log(
+        `Creating ${contentTypeApiId}.${fieldApiId}.${type} validation...`
+      );
+
+      const apiResult = await createFieldValidation({
+        fieldId,
+        fieldValidation: fieldValidationInput,
+      });
+
+      // checking standard GraphQL errors
+      let errors = apiResult.errors;
+      if (errors && errors.length > 0) {
+        throw new Error(
+          `Error in creating ${contentTypeApiId}.${fieldApiId}.${type} validation: ${
+            apiResult.errors[0].message
+          }`
+        );
+      }
+
+      // checking validations errors
+      errors = apiResult.data.errors;
+      if (errors && errors.length > 0) {
+        throw new Error(
+          `Error in creating ${contentTypeApiId}.${fieldApiId}.${type} validation: ${
+            apiResult.errors[0].message
+          }`
+        );
+      }
+
+      console.log(
+        `${contentTypeApiId}.${fieldApiId}.${type} validation was successfully created.`
+      );
+
       return {
-        id: apiResult.data.createField.field.id,
-        ...fieldInput,
+        id: apiResult.data.createFieldValidation.fieldValidation.id,
+        ...fieldValidationInput,
       };
     })
   );

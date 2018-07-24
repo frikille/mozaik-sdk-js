@@ -478,7 +478,7 @@ describe('createFieldValidationInputs function', () => {
 
       const expected = [
         {
-          type: 'RANGE',
+          type: 'VALUE_RANGE',
           config: { valueMinInt: 5, valueMaxInt: 10 },
           errorMessage: 'test err',
         },
@@ -498,7 +498,7 @@ describe('createFieldValidationInputs function', () => {
 
       const expected = [
         {
-          type: 'RANGE',
+          type: 'VALUE_RANGE',
           config: { valueMinInt: 5, valueMaxInt: 5 },
           errorMessage: 'test err',
         },
@@ -639,7 +639,7 @@ describe('createFieldValidationInputs function', () => {
 
       const expected = [
         {
-          type: 'RANGE',
+          type: 'VALUE_RANGE',
           config: { valueMinFloat: 5.1, valueMaxFloat: 10.1 },
           errorMessage: 'test err',
         },
@@ -659,7 +659,7 @@ describe('createFieldValidationInputs function', () => {
 
       const expected = [
         {
-          type: 'RANGE',
+          type: 'VALUE_RANGE',
           config: { valueMinFloat: 5.1, valueMaxFloat: 5.1 },
           errorMessage: 'test err',
         },
@@ -800,7 +800,7 @@ describe('createFieldValidationInputs function', () => {
 
       const expected = [
         {
-          type: 'RANGE',
+          type: 'VALUE_RANGE',
           config: { dateMin: '1985-10-26', dateMax: '2015-10-21' },
           errorMessage: 'test err',
         },
@@ -820,7 +820,7 @@ describe('createFieldValidationInputs function', () => {
 
       const expected = [
         {
-          type: 'RANGE',
+          type: 'VALUE_RANGE',
           config: { dateMin: '1985-10-26', dateMax: '1985-10-26' },
           errorMessage: 'test err',
         },
@@ -989,7 +989,7 @@ describe('createFieldValidationInputs function', () => {
 
       const expected = [
         {
-          type: 'RANGE',
+          type: 'VALUE_RANGE',
           config: {
             dateTimeMin: '1985-10-26T09:00:00.000Z',
             dateTimeMax: '2015-10-21T07:28:00.000Z',
@@ -1012,7 +1012,7 @@ describe('createFieldValidationInputs function', () => {
 
       const expected = [
         {
-          type: 'RANGE',
+          type: 'VALUE_RANGE',
           config: {
             dateTimeMin: '1985-10-26T09:00:00.000Z',
             dateTimeMax: '1985-10-26T09:00:00.000Z',

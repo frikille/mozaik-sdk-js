@@ -32,3 +32,19 @@ type Homepage implements SingletonContentType {
   title: String @config(isTitle: true)
   highlightedPost: [Post]
 }
+
+type ValidationTest implements SimpleContentType {
+  f1: String @validation(minLength: 5, maxLength: 10, errorMessage: "f1 error")
+  f2: ID @validation(minLength: 5, maxLength: 10, errorMessage: "f2 error")
+  f3: SinglelineText @validation(minLength: 5, maxLength: 10, errorMessage: "f3 error")
+  f4: MultilineText @validation(minLength: 5, maxLength: 10, errorMessage: "f4 error")
+  f5: RichText @validation(minLength: 5, maxLength: 10, errorMessage: "f5 error")
+  f6: Int @validation(min: 5, max: 5, errorMessage: "f6 error")
+  f7: Float @validation(min: 5.0, max: 10.0, errorMessage: "f7 error")
+  f8: Date @validation(min: "1985-10-26", max: "2015-10-21", errorMessage: "f8 error")
+  f9: DateTime @validation(min: "1985-10-26T09:00:00.000Z", max: "2015-10-21T07:28:00.000Z", errorMessage: "f9 error")
+  f10: Image @validation(maxWidth: 1000, maxHeight: 1000, maxSize: 1024000, fileType: "png", errorMessage: "f10 error")
+  f11: File @validation(maxSize: 1024000, fileType: "pdf", errorMessage: "f11 error")
+  f12: Audio @validation(maxSize: 1024000, fileType: "waw", errorMessage: "f12 error")
+  f13: Video @validation(maxSize: 1024000, fileType: "avi", errorMessage: "f13 error")
+}

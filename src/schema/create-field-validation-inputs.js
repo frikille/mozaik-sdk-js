@@ -196,7 +196,7 @@ const createLengthMinMaxValidation = createMinMaxValidationFunc(
 const createIntMinMaxValidation = createMinMaxValidationFunc(
   ['min', 'max'],
   GraphQLInt,
-  ['MIN_VALUE', 'MAX_VALUE', 'RANGE'],
+  ['MIN_VALUE', 'MAX_VALUE', 'VALUE_RANGE'],
   ['valueMinInt', 'valueMaxInt'],
   v => parseInt(v),
   (a, b) => parseInt(a) > parseInt(b)
@@ -205,7 +205,7 @@ const createIntMinMaxValidation = createMinMaxValidationFunc(
 const createFloatMinMaxValidation = createMinMaxValidationFunc(
   ['min', 'max'],
   GraphQLFloat,
-  ['MIN_VALUE', 'MAX_VALUE', 'RANGE'],
+  ['MIN_VALUE', 'MAX_VALUE', 'VALUE_RANGE'],
   ['valueMinFloat', 'valueMaxFloat'],
   v => parseFloat(v),
   (a, b) => parseFloat(a) > parseFloat(b)
@@ -214,7 +214,7 @@ const createFloatMinMaxValidation = createMinMaxValidationFunc(
 const createDateMinMaxValidation = createMinMaxValidationFunc(
   ['min', 'max'],
   GraphQLString,
-  ['MIN_VALUE', 'MAX_VALUE', 'RANGE'],
+  ['MIN_VALUE', 'MAX_VALUE', 'VALUE_RANGE'],
   ['dateMin', 'dateMax'],
   v => parseDate(String(v)),
   (a, b) => {
@@ -227,7 +227,7 @@ const createDateMinMaxValidation = createMinMaxValidationFunc(
 const createDateTimeMinMaxValidation = createMinMaxValidationFunc(
   ['min', 'max'],
   GraphQLString,
-  ['MIN_VALUE', 'MAX_VALUE', 'RANGE'],
+  ['MIN_VALUE', 'MAX_VALUE', 'VALUE_RANGE'],
   ['dateTimeMin', 'dateTimeMax'],
   v => parseDateTime(String(v)),
   (a, b) => {

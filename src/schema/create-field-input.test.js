@@ -17,6 +17,7 @@ describe('createFieldInput function', () => {
         apiId: 'twitter',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -41,6 +42,7 @@ describe('createFieldInput function', () => {
         apiId: 'post',
         type: 'FEATURED_POST',
         hasMultipleValues: false,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -62,6 +64,7 @@ describe('createFieldInput function', () => {
         apiId: 'tags',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: true,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -104,6 +107,7 @@ describe('createFieldInput function', () => {
       apiId: 'comments',
       type: 'FEATURED_POST_COMMENT',
       hasMultipleValues: true,
+      validations: [],
     };
 
     expect(createFieldInput(input)).toEqual(output);
@@ -125,6 +129,7 @@ describe('createFieldInput function', () => {
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         groupName: 'foo',
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -179,6 +184,7 @@ describe('createFieldInput function', () => {
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         includeInDisplayName: true,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -231,6 +237,7 @@ describe('createFieldInput function', () => {
         apiId: 'myField',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -250,6 +257,7 @@ describe('createFieldInput function', () => {
         apiId: 'myField',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -289,24 +297,28 @@ describe('createFieldInput function', () => {
           apiId: 'myField',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
+          validations: [],
         },
         {
           label: 'My CMS field',
           apiId: 'myCMSField',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
+          validations: [],
         },
         {
           label: 'My field',
           apiId: 'my_field',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
+          validations: [],
         },
         {
           label: 'My field 1',
           apiId: 'myField1',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
+          validations: [],
         },
       ];
 
@@ -332,6 +344,7 @@ describe('createFieldInput function', () => {
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         description: 'My test field',
+        validations: [],
       };
 
       expect(createFieldInput(input)).toEqual(output);
@@ -350,6 +363,30 @@ describe('createFieldInput function', () => {
         message: 'was expecting String',
         locations: [{ line: 3, column: 56 }],
       });
+    });
+  });
+
+  describe('Field with validation', () => {
+    it('correctly parses the validation configs', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: SinglelineText @validation(minLength: 5, errorMessage: "err")
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      const output = {
+        label: 'Field',
+        apiId: 'field',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        validations: [
+          { config: { lengthMin: 5 }, errorMessage: 'err', type: 'MIN_LENGTH' },
+        ],
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
     });
   });
 });

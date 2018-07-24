@@ -24,6 +24,7 @@ describe('createContentTypeInput function', () => {
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
+            validations: [],
           },
           {
             apiId: 'twitter',
@@ -31,6 +32,7 @@ describe('createContentTypeInput function', () => {
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 2,
+            validations: [],
           },
           {
             apiId: 'email',
@@ -38,6 +40,7 @@ describe('createContentTypeInput function', () => {
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 3,
+            validations: [],
           },
         ],
       };
@@ -90,6 +93,7 @@ describe('createContentTypeInput function', () => {
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
+            validations: [],
           },
         ],
         isLandingPage: true,
@@ -143,6 +147,7 @@ describe('createContentTypeInput function', () => {
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
+            validations: [],
           },
         ],
         isBlockGroup: true,

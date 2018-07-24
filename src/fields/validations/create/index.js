@@ -34,7 +34,7 @@ function createFieldValidation({ fieldId, fieldValidation }: Options) {
       fieldId,
       fieldValidation,
     },
-    operationName: 'createFieldMutation',
+    operationName: 'createFieldValidationMutation',
   });
 }
 

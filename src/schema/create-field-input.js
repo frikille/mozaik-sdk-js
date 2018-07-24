@@ -5,6 +5,7 @@ const { GraphQLError, GraphQLString, GraphQLBoolean } = require('graphql');
 const getDirectiveValue = require('./get-directive-value.js');
 const generateLabel = require('./generate-label.js');
 const getFieldType = require('./get-field-type.js');
+const createFieldValidationInputs = require('./create-field-validation-inputs.js');
 
 const typeMapping = new Map([
   ['String', 'TEXT_SINGLELINE'],
@@ -143,19 +144,20 @@ module.exports = function createFieldInput(
       .toUpperCase();
   }
 
+  if (reservedFieldNames.includes(name.value)) {
+    throw new GraphQLError(
+      `${name.value} is a reserved field name`,
+      definition
+    );
+  }
+
   const input: FieldInput = {
     label: getLabel(definition),
     apiId: name.value,
     type: mozaikType,
     hasMultipleValues: graphqlType.hasMultipleValues,
+    validations: createFieldValidationInputs(definition),
   };
-
-  if (reservedFieldNames.includes(input.apiId)) {
-    throw new GraphQLError(
-      `${input.apiId} is a reserved field name`,
-      definition
-    );
-  }
 
   setDescription(definition, input);
   setGroupName(definition, input);
