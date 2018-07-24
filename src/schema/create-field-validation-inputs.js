@@ -1,5 +1,9 @@
 // @flow
-const FieldValidationInput = require('../fields/validations/create/index.js');
+import type { FieldValidationInput } from '../fields/validations/create/index.js';
+import type {
+  ValidationEnum,
+  FieldValidationConfigInput,
+} from '../fields/validations/index.js';
 import type { GraphQLInputType } from 'graphql';
 import type { FieldDefinitionNode, DirectiveNode } from 'graphql/language/ast';
 const getArgumentValue = require('./get-argument-value.js');
@@ -10,7 +14,7 @@ import type { DateType, DateTime } from '../../index.js';
 function createValidationFunc(
   argName: string,
   argType: GraphQLInputType,
-  validationType: string,
+  validationType: ValidationEnum,
   configKey: string,
   value: mixed => mixed,
   validator: mixed => void,
@@ -19,7 +23,10 @@ function createValidationFunc(
   field: FieldDefinitionNode,
   directive: DirectiveNode
 ) => Array<FieldValidationInput> {
-  return function(field: FieldDefinitionNode, directive: DirectiveNode) {
+  return function(
+    field: FieldDefinitionNode,
+    directive: DirectiveNode
+  ): Array<FieldValidationInput> {
     const { arguments: args = [] } = directive;
     const argValue = getArgumentValue(args, argName, argType, validator);
     if (typeof argValue === 'undefined') {
@@ -36,17 +43,19 @@ function createValidationFunc(
     if (!errorMessage) {
       errorMessage = defaultErrorMessage(argValue);
     }
-    const config = {};
+    const config: FieldValidationConfigInput = {};
     config[configKey] = value(argValue);
 
-    return [{ type: validationType, config, errorMessage }];
+    return [
+      { type: validationType, config, errorMessage: String(errorMessage) },
+    ];
   };
 }
 
 function createMinMaxValidationFunc(
   argNames: Array<string>,
   argType: GraphQLInputType,
-  validationTypes: Array<string>,
+  validationTypes: Array<ValidationEnum>,
   configKeys: Array<string>,
   value: mixed => mixed,
   isAGreaterThanB: (a: mixed, b: mixed) => boolean,
@@ -55,7 +64,10 @@ function createMinMaxValidationFunc(
   field: FieldDefinitionNode,
   directive: DirectiveNode
 ) => Array<FieldValidationInput> {
-  return function(field: FieldDefinitionNode, directive: DirectiveNode) {
+  return function(
+    field: FieldDefinitionNode,
+    directive: DirectiveNode
+  ): Array<FieldValidationInput> {
     const inputs: Array<FieldValidationInput> = [];
 
     const { arguments: args = [] } = directive;
@@ -89,13 +101,25 @@ function createMinMaxValidationFunc(
     if (typeof min !== 'undefined' && typeof max !== 'undefined') {
       config[configKeys[0]] = value(min);
       config[configKeys[1]] = value(max);
-      inputs.push({ type: validationTypes[2], config, errorMessage });
+      inputs.push({
+        type: validationTypes[2],
+        config,
+        errorMessage: String(errorMessage),
+      });
     } else if (typeof min !== 'undefined') {
       config[configKeys[0]] = value(min);
-      inputs.push({ type: validationTypes[0], config, errorMessage });
+      inputs.push({
+        type: validationTypes[0],
+        config,
+        errorMessage: String(errorMessage),
+      });
     } else {
       config[configKeys[1]] = value(max);
-      inputs.push({ type: validationTypes[1], config, errorMessage });
+      inputs.push({
+        type: validationTypes[1],
+        config,
+        errorMessage: String(errorMessage),
+      });
     }
 
     return inputs;

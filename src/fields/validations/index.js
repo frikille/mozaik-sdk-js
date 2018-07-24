@@ -7,21 +7,21 @@ import type { FieldValidationInput } from './create/index.js';
 export type FieldValidation = { id: string } & FieldValidationInput;
 
 export type FieldValidationConfigInput = {
-  lengthMin: number,
-  lengthMax: number,
-  valueMinInt: number,
-  valueMaxInt: number,
-  valueMinFloat: number,
-  valueMaxFloat: number,
-  dateMin: Date,
-  dateMax: Date,
-  dateTimeMin: DateTime,
-  dateTimeMax: DateTime,
-  pattern: string,
-  imageWidth: number,
-  imageHeight: number,
-  maxFileSize: number,
-  fileType: string,
+  lengthMin?: number,
+  lengthMax?: number,
+  valueMinInt?: number,
+  valueMaxInt?: number,
+  valueMinFloat?: number,
+  valueMaxFloat?: number,
+  dateMin?: Date,
+  dateMax?: Date,
+  dateTimeMin?: DateTime,
+  dateTimeMax?: DateTime,
+  pattern?: string,
+  imageWidth?: number,
+  imageHeight?: number,
+  maxFileSize?: number,
+  fileType?: string,
 };
 
 export type ValidationEnum =
