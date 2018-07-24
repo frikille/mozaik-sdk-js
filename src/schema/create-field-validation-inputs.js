@@ -282,12 +282,13 @@ module.exports = function createFieldValidationInputs(
 ): Array<FieldValidationInput> {
   const inputs: Array<FieldValidationInput> = [];
 
+  const { type, hasMultipleValues, required } = getFieldType(field.type);
+
   const { directives = [] } = field;
   const validationDirectives =
     directives.filter(d => d.name.value === 'validation') || [];
 
   for (let directive of validationDirectives) {
-    const { type, hasMultipleValues } = getFieldType(field.type);
     if (!hasMultipleValues) {
       switch (type) {
         case 'String':
@@ -324,6 +325,14 @@ module.exports = function createFieldValidationInputs(
           break;
       }
     }
+  }
+
+  if (required) {
+    inputs.push({
+      type: 'REQUIRED',
+      config: {},
+      errorMessage: 'this field is required',
+    });
   }
 
   return inputs;

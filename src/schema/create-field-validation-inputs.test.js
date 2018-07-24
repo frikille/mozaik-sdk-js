@@ -1399,4 +1399,26 @@ describe('createFieldValidationInputs function', () => {
       });
     });
   });
+
+  describe('field with exclamation mark', () => {
+    it('creates a required validation', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          field: String!
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const field = simpleContentTypes[0].fields[0];
+
+      const expected = [
+        {
+          type: 'REQUIRED',
+          config: {},
+          errorMessage: 'this field is required',
+        },
+      ];
+
+      expect(createFieldValidationInputs(field)).toEqual(expected);
+    });
+  });
 });

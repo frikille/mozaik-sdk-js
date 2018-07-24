@@ -58,6 +58,8 @@ type ValidationTestA implements SimpleContentType {
   f7: File @validation(maxSize: 1024000, fileType: "pdf", errorMessage: "error")
   f8: Audio @validation(maxSize: 1024000, fileType: "waw", errorMessage: "error")
   f9: Video @validation(maxSize: 1024000, fileType: "avi", errorMessage: "error")
+
+  f10: String!
 }
 
 type ValidationTestB implements SimpleContentType {

@@ -72,19 +72,30 @@ describe('createFieldInput function', () => {
   });
 
   describe('NonNullType', () => {
-    it('throws an error', () => {
+    it('returns the correct FieldInput object', () => {
       const schema = `
         type Object implements SimpleContentType {
-          mandatoryField: String!
+          twitter: SinglelineText!
         }
       `;
       const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0].fields[0];
 
-      expect(() => createFieldInput(input)).toThrow({
-        message: 'non-null fields are not supported',
-        locations: [{ line: 3, column: 27 }],
-      });
+      const output = {
+        label: 'Twitter',
+        apiId: 'twitter',
+        type: 'TEXT_SINGLELINE',
+        hasMultipleValues: false,
+        validations: [
+          {
+            config: {},
+            errorMessage: 'this field is required',
+            type: 'REQUIRED',
+          },
+        ],
+      };
+
+      expect(createFieldInput(input)).toEqual(output);
     });
   });
 
