@@ -11,7 +11,7 @@ const {
   singletonContentTypes,
   embeddableContentTypes,
   hashmapContentTypes,
-} = parseFile(join(__dirname, '../../src/schema/fixtures/schema2.graphql'));
+} = parseFile(join(__dirname, '../../src/schema/fixtures/schema1.graphql'));
 
 const contentTypesToCreate = [
   ...simpleContentTypes.map(c => createContentTypeInput(c)),
