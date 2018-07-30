@@ -329,4 +329,24 @@ describe('createContentTypeInput function', () => {
       });
     });
   });
+
+  describe('Object with multi-line descriptions', () => {
+    it('removes the indentation from the description', () => {
+      const schema = `
+        """
+        This is a multiline
+        description
+        """
+        type Object implements SimpleContentType {
+          field: SinglelineText
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0];
+
+      expect(createContentTypeInput(input)['description']).toEqual(
+        'This is a multiline\ndescription'
+      );
+    });
+  });
 });

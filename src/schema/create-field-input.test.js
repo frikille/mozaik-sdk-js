@@ -377,4 +377,24 @@ describe('createFieldInput function', () => {
       expect(createFieldInput(input)).toEqual(output);
     });
   });
+
+  describe('Field with multi-line descriptions', () => {
+    it('removes the indentation from the description', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          """
+          This is a multiline
+          description
+          """
+          field: SinglelineText
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(createFieldInput(input)['description']).toEqual(
+        'This is a multiline\ndescription'
+      );
+    });
+  });
 });
