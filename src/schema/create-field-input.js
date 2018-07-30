@@ -43,21 +43,6 @@ const reservedFieldNames = [
   'latestPublishDate',
 ];
 
-function setDescription(definition: FieldDefinitionNode, input: FieldInput) {
-  const { directives = [] } = definition;
-  const description = getDirectiveValue(
-    directives,
-    'config',
-    'description',
-    GraphQLString,
-    () => {}
-  );
-
-  if (description) {
-    input.description = String(description);
-  }
-}
-
 function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
   const { directives = [] } = definition;
   const groupName = getDirectiveValue(
@@ -154,12 +139,14 @@ module.exports = function createFieldInput(
   const input: FieldInput = {
     label: getLabel(definition),
     apiId: name.value,
+    description: definition.description
+      ? definition.description.value.trim()
+      : '',
     type: mozaikType,
     hasMultipleValues: graphqlType.hasMultipleValues,
     validations: createFieldValidationInputs(definition),
   };
 
-  setDescription(definition, input);
   setGroupName(definition, input);
   setIncludeInDisplayName(definition, input);
 

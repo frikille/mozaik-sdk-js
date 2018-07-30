@@ -20,6 +20,9 @@ function createContentTypeInputFromObject(
     apiId: name.value
       .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
       .toUpperCase(),
+    description: definition.description
+      ? definition.description.value.trim()
+      : '',
     fields: fields.map(f => {
       const field = createFieldInput(f);
       field.position = position++;
@@ -51,6 +54,9 @@ function createContentTypeInputFromEnum(
       .toUpperCase(),
     isEnum: true,
     isHashmap: true,
+    description: definition.description
+      ? definition.description.value.trim()
+      : '',
     enumValues: values.map(v => {
       const value =
         getDirectiveValue(
