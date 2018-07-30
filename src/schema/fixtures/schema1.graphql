@@ -1,14 +1,24 @@
+"""
+A post author
+"""
 type Author implements SimpleContentType {
   name: SinglelineText @config(groupName: "personal", isTitle: true)
   email: SinglelineText @config(groupName: "personal")
-  twitter: SinglelineText @config(groupName: "social", description: "Twitter handle")
+  "Twitter username"
+  twitter: SinglelineText @config(groupName: "social")
 }
 
+"""
+Post category, can have subcategories
+"""
 type Category implements SimpleContentType {
   name: String @config(isTitle: true)
   subcategories: [Category]
 }
 
+"""
+A blog post
+"""
 type Post implements SimpleContentType {
   title: String @config(isTitle: true)
   body: RichText
@@ -17,17 +27,28 @@ type Post implements SimpleContentType {
   categories: [Category]
 }
 
+"""
+Colors used as background color for featured images
+"""
 enum ColorEnum {
   blue @config(label: "Blue")
   lightRed @config(label: "Light red")
 }
 
+"""
+Images featured on the homepage
+"""
 type FeaturedImage implements EmbeddableContentType {
   url: String
   title: String @config(isTitle: true)
   background: ColorEnum
 }
 
+"""
+Homepage
+
+You can set the highlighted posts here
+"""
 type Homepage implements SingletonContentType {
   title: String @config(isTitle: true)
   highlightedPost: [Post]
