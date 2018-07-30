@@ -6,6 +6,7 @@ describe('createFieldInput function', () => {
     it('returns the correct FieldInput object', () => {
       const schema = `
         type Object implements SimpleContentType {
+          "Test description"
           twitter: SinglelineText
         }
       `;
@@ -15,6 +16,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'Twitter',
         apiId: 'twitter',
+        description: 'Test description',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         validations: [],
@@ -40,6 +42,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'Post',
         apiId: 'post',
+        description: '',
         type: 'FEATURED_POST',
         hasMultipleValues: false,
         validations: [],
@@ -62,6 +65,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'Tags',
         apiId: 'tags',
+        description: '',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: true,
         validations: [],
@@ -84,6 +88,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'Twitter',
         apiId: 'twitter',
+        description: '',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         validations: [
@@ -116,6 +121,7 @@ describe('createFieldInput function', () => {
     const output = {
       label: 'Comments',
       apiId: 'comments',
+      description: '',
       type: 'FEATURED_POST_COMMENT',
       hasMultipleValues: true,
       validations: [],
@@ -137,6 +143,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'Field',
         apiId: 'field',
+        description: '',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         groupName: 'foo',
@@ -192,6 +199,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'My title',
         apiId: 'myTitle',
+        description: '',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         includeInDisplayName: true,
@@ -246,6 +254,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'My test field',
         apiId: 'myField',
+        description: '',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         validations: [],
@@ -266,6 +275,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'My test field',
         apiId: 'myField',
+        description: '',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         validations: [],
@@ -306,6 +316,7 @@ describe('createFieldInput function', () => {
         {
           label: 'My field',
           apiId: 'myField',
+          description: '',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
           validations: [],
@@ -313,6 +324,7 @@ describe('createFieldInput function', () => {
         {
           label: 'My CMS field',
           apiId: 'myCMSField',
+          description: '',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
           validations: [],
@@ -320,6 +332,7 @@ describe('createFieldInput function', () => {
         {
           label: 'My field',
           apiId: 'my_field',
+          description: '',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
           validations: [],
@@ -327,6 +340,7 @@ describe('createFieldInput function', () => {
         {
           label: 'My field 1',
           apiId: 'myField1',
+          description: '',
           type: 'TEXT_SINGLELINE',
           hasMultipleValues: false,
           validations: [],
@@ -336,44 +350,6 @@ describe('createFieldInput function', () => {
       for (let i = 0; i < output.length; i++) {
         expect(createFieldInput(input[i])).toEqual(output[i]);
       }
-    });
-  });
-
-  describe('Field with description', () => {
-    it('should set the description parameter', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          myField: SinglelineText @config(description: "My test field")
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      const output = {
-        label: 'My field',
-        apiId: 'myField',
-        type: 'TEXT_SINGLELINE',
-        hasMultipleValues: false,
-        description: 'My test field',
-        validations: [],
-      };
-
-      expect(createFieldInput(input)).toEqual(output);
-    });
-
-    it('should throw an error if not string', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          myField: SinglelineText @config(description: 42)
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      expect(() => createFieldInput(input)).toThrow({
-        message: 'was expecting String',
-        locations: [{ line: 3, column: 56 }],
-      });
     });
   });
 
@@ -390,6 +366,7 @@ describe('createFieldInput function', () => {
       const output = {
         label: 'Field',
         apiId: 'field',
+        description: '',
         type: 'TEXT_SINGLELINE',
         hasMultipleValues: false,
         validations: [
@@ -398,6 +375,26 @@ describe('createFieldInput function', () => {
       };
 
       expect(createFieldInput(input)).toEqual(output);
+    });
+  });
+
+  describe('Field with multi-line descriptions', () => {
+    it('removes the indentation from the description', () => {
+      const schema = `
+        type Object implements SimpleContentType {
+          """
+          This is a multiline
+          description
+          """
+          field: SinglelineText
+        }
+      `;
+      const { simpleContentTypes } = parse(schema);
+      const input = simpleContentTypes[0].fields[0];
+
+      expect(createFieldInput(input)['description']).toEqual(
+        'This is a multiline\ndescription'
+      );
     });
   });
 });
