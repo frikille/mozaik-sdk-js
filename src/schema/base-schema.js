@@ -26,10 +26,6 @@ interface EmbeddableContentType {
   id: String
 }
 
-interface HashmapContentType {
-  id: String
-}
-
 union MinMaxValue = Int | Float | String
 
 directive @validation(
