@@ -5,6 +5,7 @@ describe('createContentTypeInput function', () => {
   describe('SimpleContentType', () => {
     it('returns the correct ContentTypeInput', () => {
       const schema = `
+        "Test description"
         type Author implements SimpleContentType {
           name: SinglelineText
           twitter: SinglelineText
@@ -17,10 +18,12 @@ describe('createContentTypeInput function', () => {
       const output = {
         apiId: 'AUTHOR',
         name: 'Author',
+        description: 'Test description',
         fields: [
           {
             apiId: 'name',
             label: 'Name',
+            description: '',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
@@ -29,6 +32,7 @@ describe('createContentTypeInput function', () => {
           {
             apiId: 'twitter',
             label: 'Twitter',
+            description: '',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 2,
@@ -37,6 +41,7 @@ describe('createContentTypeInput function', () => {
           {
             apiId: 'email',
             label: 'Email',
+            description: '',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 3,
@@ -76,6 +81,7 @@ describe('createContentTypeInput function', () => {
   describe('SingletonContentType', () => {
     it('returns the correct ContentTypeInput', () => {
       const schema = `
+        "Test description"
         type Homepage implements SingletonContentType {
           title: String
         }
@@ -86,10 +92,12 @@ describe('createContentTypeInput function', () => {
       const output = {
         apiId: 'HOMEPAGE',
         name: 'Homepage',
+        description: 'Test description',
         fields: [
           {
             apiId: 'title',
             label: 'Title',
+            description: '',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
@@ -130,6 +138,7 @@ describe('createContentTypeInput function', () => {
   describe('EmbeddableContentType', () => {
     it('returns the correct ContentTypeInput', () => {
       const schema = `
+        "Test description"
         type Picture implements EmbeddableContentType {
           url: String
         }
@@ -140,10 +149,12 @@ describe('createContentTypeInput function', () => {
       const output = {
         apiId: 'PICTURE',
         name: 'Picture',
+        description: 'Test description',
         fields: [
           {
             apiId: 'url',
             label: 'Url',
+            description: '',
             type: 'TEXT_SINGLELINE',
             hasMultipleValues: false,
             position: 1,
@@ -184,6 +195,7 @@ describe('createContentTypeInput function', () => {
   describe('EnumContentType', () => {
     it('returns the correct ContentTypeInput', () => {
       const schema = `
+        "Test description"
         enum Color {
           blue @config(label: "Blue")
           lightRed @config(label: "Light red")
@@ -195,6 +207,7 @@ describe('createContentTypeInput function', () => {
       const output = {
         apiId: 'COLOR',
         name: 'Color',
+        description: 'Test description',
         enumValues: [
           {
             key: 'blue',
@@ -248,6 +261,7 @@ describe('createContentTypeInput function', () => {
       const output = {
         apiId: 'COLOR',
         name: 'Color',
+        description: '',
         enumValues: [
           {
             key: 'blue',
@@ -273,6 +287,7 @@ describe('createContentTypeInput function', () => {
       const output = {
         apiId: 'COLOR',
         name: 'Color',
+        description: '',
         enumValues: [
           {
             key: 'blue',

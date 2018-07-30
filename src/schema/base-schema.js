@@ -10,7 +10,7 @@ scalar Image
 scalar Video
 
 directive @config(label: String!) on ENUM_VALUE
-directive @config(label: String!, description: String, groupName: String!, isTitle: Boolean) on FIELD_DEFINITION
+directive @config(label: String!, groupName: String!, isTitle: Boolean) on FIELD_DEFINITION
 
 interface SimpleContentType {
   id: String
