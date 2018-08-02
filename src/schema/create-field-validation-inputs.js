@@ -167,8 +167,8 @@ const createPatternValidation = createValidationFunc(
   v => `should match ${String(v)}`
 );
 
-const createImageMaxWidthValidation = createValidationFunc(
-  'maxWidth',
+const createImageWidthValidation = createValidationFunc(
+  'width',
   GraphQLInt,
   'IMAGE_WIDTH',
   'imageWidth',
@@ -178,11 +178,11 @@ const createImageMaxWidthValidation = createValidationFunc(
       throw new Error('was expecting a positive integer');
     }
   },
-  v => `the maximum allowed image width is ${parseInt(v)}`
+  v => `the image width should be ${parseInt(v)}px`
 );
 
-const createImageMaxHeightValidation = createValidationFunc(
-  'maxHeight',
+const createImageHeightValidation = createValidationFunc(
+  'height',
   GraphQLInt,
   'IMAGE_HEIGHT',
   'imageHeight',
@@ -192,7 +192,7 @@ const createImageMaxHeightValidation = createValidationFunc(
       throw new Error('was expecting a positive integer');
     }
   },
-  v => `the maximum allowed image height is ${parseInt(v)}`
+  v => `the image height should be ${parseInt(v)}px`
 );
 
 const createMaxSizeValidation = createValidationFunc(
@@ -338,8 +338,8 @@ module.exports = function createFieldValidationInputs(
 
         case 'Image':
           // TODO: replace these with min/max validation when the API supports it
-          inputs.push(...createImageMaxWidthValidation(field, directive));
-          inputs.push(...createImageMaxHeightValidation(field, directive));
+          inputs.push(...createImageWidthValidation(field, directive));
+          inputs.push(...createImageHeightValidation(field, directive));
         // falls through
         case 'File':
         case 'Audio':
