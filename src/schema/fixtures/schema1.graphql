@@ -75,7 +75,7 @@ type ValidationTestA implements SimpleContentType {
   f52: DateTime @validation(max: "2015-10-21T07:28:00.000Z", errorMessage: "error")
   f53: DateTime @validation(min: "1985-10-26T09:00:00.000Z", max: "2015-10-21T07:28:00.000Z", errorMessage: "error")
   
-  f6: Image @validation(maxWidth: 1000, maxHeight: 1000, maxSize: 1024000, fileType: "png", errorMessage: "error")
+  f6: Image @validation(width: 1000, height: 1000, maxSize: 1024000, fileType: "png", errorMessage: "error")
   f7: File @validation(maxSize: 1024000, fileType: "pdf", errorMessage: "error")
   f8: Audio @validation(maxSize: 1024000, fileType: "waw", errorMessage: "error")
   f9: Video @validation(maxSize: 1024000, fileType: "avi", errorMessage: "error")
@@ -104,7 +104,7 @@ type ValidationTestB implements SimpleContentType {
   f52: DateTime @validation(max: "2015-10-21T07:28:00.000Z")
   f53: DateTime @validation(min: "1985-10-26T09:00:00.000Z", max: "2015-10-21T07:28:00.000Z")
   
-  f6: Image @validation(maxWidth: 1000, maxHeight: 1000, maxSize: 1024000, fileType: "png")
+  f6: Image @validation(width: 1000, height: 1000, maxSize: 1024000, fileType: "png")
   f7: File @validation(maxSize: 1024000, fileType: "pdf")
   f8: Audio @validation(maxSize: 1024000, fileType: "waw")
   f9: Video @validation(maxSize: 1024000, fileType: "avi")

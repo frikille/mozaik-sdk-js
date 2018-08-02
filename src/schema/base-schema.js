@@ -34,10 +34,8 @@ directive @validation(
   min: MinMaxValue,
   max: MinMaxValue,
   pattern: String,
-  minWidth: Int,
-  maxWidth: Int,
-  minHeight: Int,
-  maxHeight: Int,
+  width: Int,
+  height: Int,
   maxSize: Int,
   fileType: String,
   errorMessage: String
