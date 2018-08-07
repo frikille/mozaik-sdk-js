@@ -3,3 +3,5 @@ lib
 .DS_Store
 coverage
 .vscode
+
+mozaik-schema.graphql
