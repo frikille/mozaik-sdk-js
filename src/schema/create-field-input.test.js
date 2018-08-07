@@ -25,7 +25,7 @@ describe('createFieldInput function', () => {
       expect(createFieldInput(input)).toEqual(output);
     });
 
-    it('converts the user type to an uppercased name', () => {
+    it('leaves a custom type name as is', () => {
       const schema = `
         type FeaturedPost implements SimpleContentType {
           title: String
@@ -43,7 +43,7 @@ describe('createFieldInput function', () => {
         label: 'Post',
         apiId: 'post',
         description: '',
-        type: 'FEATURED_POST',
+        type: 'FeaturedPost',
         hasMultipleValues: false,
         validations: [],
       };
@@ -104,7 +104,7 @@ describe('createFieldInput function', () => {
     });
   });
 
-  it('converts the user type to an uppercased name', () => {
+  it('leaves a custom type name as is', () => {
     const schema = `
       type FeaturedPost implements SimpleContentType {
         title: String
@@ -122,7 +122,7 @@ describe('createFieldInput function', () => {
       label: 'Comments',
       apiId: 'comments',
       description: '',
-      type: 'FEATURED_POST_COMMENT',
+      type: 'FeaturedPostComment',
       hasMultipleValues: true,
       validations: [],
     };

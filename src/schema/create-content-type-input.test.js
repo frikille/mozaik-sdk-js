@@ -16,7 +16,7 @@ describe('createContentTypeInput function', () => {
       const input = simpleContentTypes[0];
 
       const output = {
-        apiId: 'AUTHOR',
+        apiId: 'Author',
         name: 'Author',
         description: 'Test description',
         fields: [
@@ -53,7 +53,7 @@ describe('createContentTypeInput function', () => {
       expect(createContentTypeInput(input)).toEqual(output);
     });
 
-    it('uses underscore for multipart camel case names', () => {
+    it('leaves the type name as is', () => {
       const schema = `
         type CamelCaseName implements SimpleContentType {
           field1: String
@@ -62,7 +62,7 @@ describe('createContentTypeInput function', () => {
       const { simpleContentTypes } = parse(schema);
       const input = simpleContentTypes[0];
 
-      expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
+      expect(createContentTypeInput(input).apiId).toEqual('CamelCaseName');
     });
 
     it('generates a label from the name', () => {
@@ -90,7 +90,7 @@ describe('createContentTypeInput function', () => {
       const input = singletonContentTypes[0];
 
       const output = {
-        apiId: 'HOMEPAGE',
+        apiId: 'Homepage',
         name: 'Homepage',
         description: 'Test description',
         fields: [
@@ -110,7 +110,7 @@ describe('createContentTypeInput function', () => {
       expect(createContentTypeInput(input)).toEqual(output);
     });
 
-    it('uses underscore for multipart camel case names', () => {
+    it('leaves the type name as is', () => {
       const schema = `
           type CamelCaseName implements SingletonContentType {
             field1: String
@@ -119,7 +119,7 @@ describe('createContentTypeInput function', () => {
       const { singletonContentTypes } = parse(schema);
       const input = singletonContentTypes[0];
 
-      expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
+      expect(createContentTypeInput(input).apiId).toEqual('CamelCaseName');
     });
 
     it('generates a label from the name', () => {
@@ -147,7 +147,7 @@ describe('createContentTypeInput function', () => {
       const input = embeddableContentTypes[0];
 
       const output = {
-        apiId: 'PICTURE',
+        apiId: 'Picture',
         name: 'Picture',
         description: 'Test description',
         fields: [
@@ -167,7 +167,7 @@ describe('createContentTypeInput function', () => {
       expect(createContentTypeInput(input)).toEqual(output);
     });
 
-    it('uses underscore for multipart camel case names', () => {
+    it('leaves the type name as is', () => {
       const schema = `
           type CamelCaseName implements EmbeddableContentType {
             field1: String
@@ -176,7 +176,7 @@ describe('createContentTypeInput function', () => {
       const { embeddableContentTypes } = parse(schema);
       const input = embeddableContentTypes[0];
 
-      expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
+      expect(createContentTypeInput(input).apiId).toEqual('CamelCaseName');
     });
 
     it('generates a label from the name', () => {
@@ -205,7 +205,7 @@ describe('createContentTypeInput function', () => {
       const input = hashmapContentTypes[0];
 
       const output = {
-        apiId: 'COLOR',
+        apiId: 'Color',
         name: 'Color',
         description: 'Test description',
         enumValues: [
@@ -225,7 +225,7 @@ describe('createContentTypeInput function', () => {
       expect(createContentTypeInput(input)).toEqual(output);
     });
 
-    it('uses underscore for multipart camel case names', () => {
+    it('leaves the type name as is', () => {
       const schema = `
         enum CamelCaseName {
           value1 @config(label: "Value 1")
@@ -234,7 +234,7 @@ describe('createContentTypeInput function', () => {
       const { hashmapContentTypes } = parse(schema);
       const input = hashmapContentTypes[0];
 
-      expect(createContentTypeInput(input).apiId).toEqual('CAMEL_CASE_NAME');
+      expect(createContentTypeInput(input).apiId).toEqual('CamelCaseName');
     });
 
     it('generates a label from the name', () => {
@@ -259,7 +259,7 @@ describe('createContentTypeInput function', () => {
       const input = hashmapContentTypes[0];
 
       const output = {
-        apiId: 'COLOR',
+        apiId: 'Color',
         name: 'Color',
         description: '',
         enumValues: [
@@ -285,7 +285,7 @@ describe('createContentTypeInput function', () => {
       const input = hashmapContentTypes[0];
 
       const output = {
-        apiId: 'COLOR',
+        apiId: 'Color',
         name: 'Color',
         description: '',
         enumValues: [

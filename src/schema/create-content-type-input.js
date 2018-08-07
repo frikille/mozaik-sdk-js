@@ -17,9 +17,7 @@ function createContentTypeInputFromObject(
   let position = 1;
   const contentTypeInput: ContentTypeInput = {
     name: generateLabel(name.value),
-    apiId: name.value
-      .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
-      .toUpperCase(),
+    apiId: name.value,
     description: definition.description
       ? definition.description.value.trim()
       : '',
@@ -49,9 +47,7 @@ function createContentTypeInputFromEnum(
 
   return {
     name: generateLabel(name.value),
-    apiId: name.value
-      .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
-      .toUpperCase(),
+    apiId: name.value,
     isEnum: true,
     isHashmap: true,
     description: definition.description
