@@ -1,6 +1,7 @@
 const program = require('commander');
 const initCommand = require('./commands/init.js');
 const createSchema = require('./commands/create-schema.js');
+const exportSchema = require('./commands/export-schema.js');
 
 const pkg = require('../../package.json');
 
@@ -20,6 +21,16 @@ program
   .command('create')
   .description('Create schema by mozaik-schema.graphql')
   .action(() => createSchema(options));
+
+program
+  .command('export')
+  .option('-f, --force', 'Override the mozaik-schema.graphql file if exists')
+  .option(
+    '-p, --print',
+    'Print the schema to the output instead of writing it to a file'
+  )
+  .description('Export schema to mozaik-schema.graphql')
+  .action(cmd => exportSchema(options, cmd));
 
 program
   .command('version')
