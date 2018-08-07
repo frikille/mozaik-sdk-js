@@ -124,9 +124,7 @@ module.exports = function createFieldInput(
 
   let mozaikType = typeMapping.get(graphqlType.type);
   if (!mozaikType) {
-    mozaikType = graphqlType.type
-      .replace(/([a-z])([A-Z])/g, g => `${g[0]}_${g[1]}`)
-      .toUpperCase();
+    mozaikType = graphqlType.type;
   }
 
   if (reservedFieldNames.includes(name.value)) {
