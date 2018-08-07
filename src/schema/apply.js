@@ -29,7 +29,7 @@ async function createContentType(
   let errors = apiResult.errors;
   if (errors && errors.length > 0) {
     throw new Error(
-      `Error in creating ${apiId} content type: ${apiResult.errors[0].message}`
+      `Error in creating ${apiId} content type: ${errors[0].message}`
     );
   }
 
@@ -37,7 +37,7 @@ async function createContentType(
   errors = apiResult.data.createContentType.errors;
   if (errors && errors.length > 0) {
     throw new Error(
-      `Error in creating ${apiId} content type: ${apiResult.errors[0].message}`
+      `Error in creating ${apiId} content type: ${errors[0].message}`
     );
   }
   console.log(`${apiId} content type was successfully created.`);
@@ -70,7 +70,7 @@ async function createField(
   if (errors && errors.length > 0) {
     throw new Error(
       `Error in creating ${contentTypeApiId}.${apiId} field: ${
-        apiResult.errors[0].message
+        errors[0].message
       }`
     );
   }
@@ -80,7 +80,7 @@ async function createField(
   if (errors && errors.length > 0) {
     throw new Error(
       `Error in creating ${contentTypeApiId}.${apiId} field: ${
-        apiResult.errors[0].message
+        errors[0].message
       }`
     );
   }
@@ -122,7 +122,7 @@ async function createFieldValidation(
   if (errors && errors.length > 0) {
     throw new Error(
       `Error in creating ${contentTypeApiId}.${fieldApiId}.${type} validation: ${
-        apiResult.errors[0].message
+        errors[0].message
       }`
     );
   }
@@ -132,7 +132,7 @@ async function createFieldValidation(
   if (errors && errors.length > 0) {
     throw new Error(
       `Error in creating ${contentTypeApiId}.${fieldApiId}.${type} validation: ${
-        apiResult.errors[0].message
+        errors[0].message
       }`
     );
   }
