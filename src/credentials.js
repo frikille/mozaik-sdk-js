@@ -17,7 +17,7 @@ if (fileExists('.mozaikrc')) {
       accessToken = mozaikrc.api_access_key;
     }
   } catch (err) {
-    console.error(err); //eslint-disable-line
+    throw err;
   }
 }
 

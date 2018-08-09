@@ -1,5 +1,5 @@
 // @flow
-
+const chalk = require('chalk');
 const exportMozaikSchema = require('../../schema/export-schema.js');
 
 type CmdOptions = {
@@ -12,9 +12,9 @@ module.exports = function exportSchema(
   { force, print }: CmdOptions
 ) {
   exportMozaikSchema({ filename: options.schemaPath, force, print }).catch(
-    err => {
+    error => {
       // eslint-disable-next-line
-      console.log(err.message);
+      console.error(chalk.red(error.message));
     }
   );
 };
