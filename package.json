@@ -22,8 +22,9 @@
     "prebuild": "rm -rf ./lib && mkdir ./lib",
     "build": "npm run build:src && npm run build:flow && npm run build:package-json",
     "build:src": "flow-remove-types ./src -d ./lib -i __mocks__ -i .test.js -p",
-    "build:flow": "flow-copy-source --ignore .test.js ./src ./lib",
+    "build:flow": "flow-copy-source --ignore .test.js -i __mocks__ ./src ./lib",
     "build:package-json": "node ./resources/update-package-json.js",
+    "build:watch": "./resources/watch-project.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "flow": "flow check",
@@ -32,15 +33,18 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "chalk": "^2.4.1",
     "commander": "^2.16.0",
     "graphql": "^0.13.2",
     "node-fetch": "^2.1.2",
+    "ora": "^3.0.0",
     "toml": "^2.3.3"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.5",
     "babel-jest": "^23.4.0",
     "babel-preset-flow": "^6.23.0",
+    "chokidar": "^2.0.4",
     "eslint": "^5.1.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-flowtype": "^2.50.0",
@@ -48,7 +52,9 @@
     "flow-bin": "^0.76.0",
     "flow-copy-source": "^1.3.0",
     "flow-remove-types": "^1.2.3",
+    "fs-extra": "^7.0.0",
     "jest": "^23.1.0",
+    "kefir": "^3.8.3",
     "prettier-eslint": "^8.8.2"
   }
 }

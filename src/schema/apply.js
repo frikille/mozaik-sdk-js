@@ -1,5 +1,4 @@
 // @flow
-/* eslint-disable no-console */
 import type { ContentType } from '../content-types/index.js';
 import type { ContentTypeInput } from '../content-types/create/index.js';
 import type { Field } from '../fields/index.js';
@@ -10,13 +9,14 @@ import type { FieldValidationInput } from '../fields/validations/create/index.js
 const callCreateContentType = require('./../content-types/create/index.js');
 const callCreateField = require('./../fields/create/index.js');
 const callCreateFieldValidation = require('./../fields/validations/create/index.js');
+const oraLogger = require('../utils/ora-logger.js');
 
 async function createContentType(
   contentTypeInput: ContentTypeInput
 ): Promise<ContentType> {
   const { apiId } = contentTypeInput;
 
-  console.log(`Creating ${apiId} content type...`);
+  oraLogger.start(`Creating ${apiId} content type`);
 
   const contentTypeWithoutFields = { ...contentTypeInput };
   contentTypeWithoutFields.fields = [];
@@ -28,6 +28,7 @@ async function createContentType(
   // checking GraphQL errors
   let errors = apiResult.errors;
   if (errors && errors.length > 0) {
+    oraLogger.fail();
     throw new Error(
       `Error in creating ${apiId} content type: ${errors[0].message}`
     );
@@ -36,11 +37,13 @@ async function createContentType(
   // checking validation errors
   errors = apiResult.data.createContentType.errors;
   if (errors && errors.length > 0) {
+    oraLogger.fail();
     throw new Error(
       `Error in creating ${apiId} content type: ${errors[0].message}`
     );
   }
-  console.log(`${apiId} content type was successfully created.`);
+
+  oraLogger.succeed(`${apiId} content type added`);
 
   return {
     id: apiResult.data.createContentType.contentType.id,
@@ -55,7 +58,7 @@ async function createField(
   const { id: contentTypeId, apiId: contentTypeApiId } = contentType;
   const { apiId, validations = [] } = fieldInput;
 
-  console.log(`Creating ${contentTypeApiId}.${apiId} field...`);
+  oraLogger.start(`Creating ${contentTypeApiId}.${apiId} field`);
 
   const fieldInputWithoutValidations = { ...fieldInput };
   delete fieldInputWithoutValidations.validations;
@@ -68,6 +71,7 @@ async function createField(
   // checking standard GraphQL errors
   let errors = apiResult.errors;
   if (errors && errors.length > 0) {
+    oraLogger.fail();
     throw new Error(
       `Error in creating ${contentTypeApiId}.${apiId} field: ${
         errors[0].message
@@ -78,6 +82,7 @@ async function createField(
   // checking validations errors
   errors = apiResult.data.errors;
   if (errors && errors.length > 0) {
+    oraLogger.fail();
     throw new Error(
       `Error in creating ${contentTypeApiId}.${apiId} field: ${
         errors[0].message
@@ -90,11 +95,15 @@ async function createField(
     ...fieldInput,
   };
 
-  for (let fieldValidationInput of validations) {
-    await createFieldValidation(contentType, field, fieldValidationInput);
-  }
+  oraLogger.succeed(`${contentTypeApiId}.${apiId} field added`);
 
-  console.log(`${contentTypeApiId}.${apiId} field was successfully created.`);
+  for (let fieldValidationInput of validations) {
+    try {
+      await createFieldValidation(contentType, field, fieldValidationInput);
+    } catch (error) {
+      throw error;
+    }
+  }
 
   return field;
 }
@@ -108,8 +117,8 @@ async function createFieldValidation(
   const { id: fieldId, apiId: fieldApiId } = field;
   const { type } = fieldValidationInput;
 
-  console.log(
-    `Creating ${contentTypeApiId}.${fieldApiId}.${type} validation...`
+  oraLogger.start(
+    `Creating ${contentTypeApiId}.${fieldApiId}.${type} validation`
   );
 
   const apiResult = await callCreateFieldValidation({
@@ -120,6 +129,7 @@ async function createFieldValidation(
   // checking standard GraphQL errors
   let errors = apiResult.errors;
   if (errors && errors.length > 0) {
+    oraLogger.fail();
     throw new Error(
       `Error in creating ${contentTypeApiId}.${fieldApiId}.${type} validation: ${
         errors[0].message
@@ -130,6 +140,7 @@ async function createFieldValidation(
   // checking validations errors
   errors = apiResult.data.errors;
   if (errors && errors.length > 0) {
+    oraLogger.fail();
     throw new Error(
       `Error in creating ${contentTypeApiId}.${fieldApiId}.${type} validation: ${
         errors[0].message
@@ -137,8 +148,8 @@ async function createFieldValidation(
     );
   }
 
-  console.log(
-    `${contentTypeApiId}.${fieldApiId}.${type} validation was successfully created.`
+  oraLogger.succeed(
+    `${contentTypeApiId}.${fieldApiId}.${type} validation added`
   );
 
   return {
@@ -151,19 +162,22 @@ module.exports = async function apply(
   contentTypeInputs: Array<ContentTypeInput>
 ) {
   try {
-    return new Promise(done => {
-      (async () => {
-        for (let contentTypeInput of contentTypeInputs) {
-          const contentType = await createContentType(contentTypeInput);
-          const { fields = [] } = contentTypeInput;
-          for (let fieldInput of fields) {
+    for (let contentTypeInput of contentTypeInputs) {
+      try {
+        const contentType = await createContentType(contentTypeInput);
+        const { fields = [] } = contentTypeInput;
+        for (let fieldInput of fields) {
+          try {
             await createField(contentType, fieldInput);
+          } catch (error) {
+            throw error;
           }
         }
-        done();
-      })();
-    });
+      } catch (error) {
+        throw error;
+      }
+    }
   } catch (e) {
-    console.error(e);
+    throw e;
   }
 };

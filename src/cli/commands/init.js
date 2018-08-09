@@ -1,5 +1,6 @@
 const fs = require('fs');
 const fileExists = require('../../utils/file-exists.js');
+const logger = require('../../utils/ora-logger');
 
 const MOZAIK_SCHEMA_NAME = 'mozaik-schema.graphql';
 const MOZAIK_CONFIG_NAME = '.mozaikrc';
@@ -44,11 +45,12 @@ const EMPTY_SCHEMA = `
 
 const EMPTY_CONFIG = `
 [default]
-api_endpoint = your-project-api-endpoint
-api_access_key = your-project-api-access-key
+api_endpoint = "your-project-api-endpoint"
+api_access_key = "your-project-api-access-key"
 `;
 
 module.exports = function init(options) {
+  logger.start('Adding main config files');
   if (!fileExists(options.schemaPath)) {
     fs.writeFileSync(MOZAIK_SCHEMA_NAME, EMPTY_SCHEMA);
   }
@@ -57,5 +59,5 @@ module.exports = function init(options) {
     fs.writeFileSync(MOZAIK_CONFIG_NAME, EMPTY_CONFIG);
   }
 
-  console.log('Done!'); //eslint-disable-line
+  logger.succeed();
 };

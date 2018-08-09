@@ -31,8 +31,7 @@ async function callApi({
 
     return result;
   } catch (error) {
-    // eslint-disable-next-line
-    console.error(error.stack);
+    throw error;
   }
 }
 

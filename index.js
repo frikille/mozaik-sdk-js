@@ -1,1 +1,3 @@
-require('./mozaik.js');
+const mozaik = require('./mozaik.js');
+
+module.exports = mozaik;
