@@ -69,16 +69,27 @@ MOZAIK_API_ACCESS_KEY=your-access-key
 
 ### CLI
 
-#### `init`
-Command: `mozaikio init`
+* #### `init`
+  Command: `mozaikio init`
 
-It creates a `.mozaikrc` file with the default profile and a `mozaik-schema.graphql` file that can be used to define a content type schema.
+  It creates a `.mozaikrc` file with the default profile and a `mozaik-schema.graphql` file that can be used to define a content type schema.
 
-#### `create`
+* #### `create`
 
-Command: `mozaikio create`
+  Command: `mozaikio create`
 
-It creates a content type schema based on the content of the `mozaik-schema.graphql` file
+  It creates a content type schema based on the content of the `mozaik-schema.graphql` file
+
+* #### `export`
+
+  Command: `mozaikio export [--print] [--force]`
+  
+  exports an existing project content type schema and saves it to the `mozaik-schema.graphql` file. If the file exists it will throw an error.
+
+
+  **Flags**:
+  * `--print` or `-p`: prints the schema to the standard output instead of saving it to a file
+  * `--force` or `-f`: if `mozaik-schema.graphql` file exists it overwrites it with the downloaded schema
 
 ### Mozaik Schema Definition Language
 
