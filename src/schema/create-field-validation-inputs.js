@@ -9,7 +9,8 @@ import type { FieldDefinitionNode, DirectiveNode } from 'graphql/language/ast';
 const getArgumentValue = require('./get-argument-value.js');
 const getFieldType = require('./get-field-type.js');
 const { GraphQLInt, GraphQLFloat, GraphQLString } = require('graphql');
-import type { DateType, DateTime } from '../../index.js';
+import type { DateType } from '../graphql/type-system/scalars/DateScalar.js';
+import type { DateTime } from '../graphql/type-system/scalars/DateTimeScalar.js';
 
 function createValidationFunc(
   argName: string,

@@ -1,7 +1,8 @@
 // @flow
 const createValidationInput = require('./create/index.js');
 
-import type { DateType as Date, DateTime } from '../index.js';
+import type { DateType as Date } from '../../graphql/type-system/scalars/DateScalar.js';
+import type { DateTime } from '../../graphql/type-system/scalars/DateTimeScalar.js';
 import type { FieldValidationInput } from './create/index.js';
 
 export type FieldValidation = { id: string } & FieldValidationInput;

@@ -2,6 +2,7 @@ const program = require('commander');
 const initCommand = require('./commands/init.js');
 const createSchema = require('./commands/create-schema.js');
 const exportSchema = require('./commands/export-schema.js');
+const diffSchema = require('./commands/diff-schema.js');
 
 const pkg = require('../../package.json');
 
@@ -31,6 +32,11 @@ program
   )
   .description('Export schema to mozaik-schema.graphql')
   .action(cmd => exportSchema(options, cmd));
+
+program
+  .command('diff')
+  .description('Compare the local and remote schemas')
+  .action(() => diffSchema(options));
 
 program
   .command('version')
