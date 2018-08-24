@@ -1,17 +1,17 @@
 tasks:
   install:
-    image: "node:carbon-alpine"
+    image: "node:carbon"
     command: ["yarn"]
     args: ["install"]
   lint:
-    image: "node:carbon-alpine"
+    image: "node:carbon"
     command: ["yarn"]
     args: ["lint"]
   flow:
-    image: "node:carbon-alpine"
+    image: "node:carbon"
     command: ["yarn"]
     args: ["flow"]
   test:
-    image: "node:carbon-alpine"
+    image: "node:carbon"
     command: ["yarn"]
     args: ["test"]
