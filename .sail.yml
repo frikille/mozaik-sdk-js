@@ -1,0 +1,17 @@
+tasks:
+  install:
+    image: "node:carbon-alpine"
+    command: ["yarn"]
+    args: ["install"]
+  lint:
+    image: "node:carbon-alpine"
+    command: ["yarn"]
+    args: ["lint"]
+  flow:
+    image: "node:carbon-alpine"
+    command: ["yarn"]
+    args: ["flow"]
+  test:
+    image: "node:carbon-alpine"
+    command: ["yarn"]
+    args: ["test"]
