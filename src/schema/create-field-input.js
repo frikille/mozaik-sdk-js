@@ -31,11 +31,7 @@ function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
     'config',
     'groupName',
     GraphQLString,
-    v => {
-      if (v === '') {
-        throw new Error('group name can not be empty');
-      }
-    }
+    () => {}
   );
 
   if (groupName) {
@@ -50,11 +46,7 @@ function getLabel(definition: FieldDefinitionNode): string {
     'config',
     'label',
     GraphQLString,
-    v => {
-      if (v === '') {
-        throw new Error('label can not be empty');
-      }
-    }
+    () => {}
   );
 
   if (label) {

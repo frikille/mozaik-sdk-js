@@ -152,21 +152,6 @@ describe('createFieldInput function', () => {
 
       expect(createFieldInput(input)).toEqual(output);
     });
-
-    it('throws an error if group name is empty', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          twitter: SinglelineText @config(groupName: "")
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      expect(() => createFieldInput(input)).toThrow({
-        message: 'group name can not be empty',
-        locations: [{ line: 3, column: 54 }],
-      });
-    });
   });
 
   describe('Field marked as title', () => {
