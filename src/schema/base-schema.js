@@ -12,6 +12,10 @@ scalar Video
 directive @config(label: String!) on ENUM_VALUE
 directive @config(label: String!, groupName: String!, isTitle: Boolean) on FIELD_DEFINITION
 
+directive @deprecated(
+  reason: String = "No longer supported"
+) on FIELD_DEFINITION | ENUM_VALUE
+
 interface SimpleContentType {
   id: String
   displayName: String

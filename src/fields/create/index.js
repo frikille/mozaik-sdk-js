@@ -15,6 +15,7 @@ export type FieldInput = {
   groupName?: string,
   description?: string,
   validations?: Array<FieldValidationInput>,
+  isDeprecated?: boolean,
 };
 
 const createFieldMutation = `

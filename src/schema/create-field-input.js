@@ -115,6 +115,13 @@ function setIncludeInDisplayName(
   }
 }
 
+function setIsDeprecated(definition: FieldDefinitionNode, input: FieldInput) {
+  const { directives = [] } = definition;
+  if (directives.filter(d => d.name.value === 'deprecated').length > 0) {
+    input.isDeprecated = true;
+  }
+}
+
 module.exports = function createFieldInput(
   definition: FieldDefinitionNode
 ): FieldInput {
@@ -147,6 +154,7 @@ module.exports = function createFieldInput(
 
   setGroupName(definition, input);
   setIncludeInDisplayName(definition, input);
+  setIsDeprecated(definition, input);
 
   return input;
 };
