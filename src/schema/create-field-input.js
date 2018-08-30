@@ -1,7 +1,7 @@
 // @flow
 import type { FieldDefinitionNode } from 'graphql/language/ast';
 import type { FieldInput } from '../fields/create/index.js';
-const { GraphQLError, GraphQLString, GraphQLBoolean } = require('graphql');
+const { GraphQLString, GraphQLBoolean } = require('graphql');
 const getDirectiveValue = require('./get-directive-value.js');
 const generateLabel = require('./generate-label.js');
 const getFieldType = require('./get-field-type.js');
@@ -23,25 +23,6 @@ const typeMapping = new Map([
   ['Image', 'IMAGE'],
   ['Video', 'VIDEO'],
 ]);
-
-const reservedFieldNames = [
-  'id',
-  'slug',
-  'contentType',
-  'displayName',
-  'currentVersion',
-  'createdAt',
-  'updatedAt',
-  'project',
-  'author',
-  'status',
-  'content',
-  'liveVersionId',
-  'latestVersionId',
-  'lockId',
-  'firstPublishDate',
-  'latestPublishDate',
-];
 
 function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
   const { directives = [] } = definition;
@@ -89,7 +70,7 @@ function setIncludeInDisplayName(
   definition: FieldDefinitionNode,
   input: FieldInput
 ) {
-  const { type, directives = [] } = definition;
+  const { directives = [] } = definition;
   const isTitle = getDirectiveValue(
     directives,
     'config',
@@ -99,18 +80,6 @@ function setIncludeInDisplayName(
   );
 
   if (isTitle) {
-    if (input.type !== 'TEXT_SINGLELINE') {
-      const singleLineTypes = [];
-      for (const [graphqlType, mozaikType] of typeMapping) {
-        if (mozaikType === 'TEXT_SINGLELINE') {
-          singleLineTypes.push(graphqlType);
-        }
-      }
-      throw new GraphQLError(
-        `isTitle flag is only valid on ${singleLineTypes.join(', ')} fields`,
-        type
-      );
-    }
     input.includeInDisplayName = true;
   }
 }
@@ -132,13 +101,6 @@ module.exports = function createFieldInput(
   let mozaikType = typeMapping.get(graphqlType.type);
   if (!mozaikType) {
     mozaikType = graphqlType.type;
-  }
-
-  if (reservedFieldNames.includes(name.value)) {
-    throw new GraphQLError(
-      `${name.value} is a reserved field name`,
-      definition
-    );
   }
 
   const input: FieldInput = {
