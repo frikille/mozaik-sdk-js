@@ -301,20 +301,6 @@ describe('createContentTypeInput function', () => {
       expect(createContentTypeInput(input)).toEqual(output);
     });
 
-    it('throws an error if label is empty', () => {
-      const schema = `
-        enum Color {
-          blue @config(label: "")
-        }
-      `;
-      const { hashmapContentTypes } = parse(schema);
-      const input = hashmapContentTypes[0];
-      expect(() => createContentTypeInput(input)).toThrow({
-        message: 'label can not be empty',
-        locations: [{ line: 3, column: 31 }],
-      });
-    });
-
     it('throws an error if label is not a string', () => {
       const schema = `
         enum Color {

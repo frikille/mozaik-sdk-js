@@ -152,38 +152,6 @@ describe('createFieldInput function', () => {
 
       expect(createFieldInput(input)).toEqual(output);
     });
-
-    it('throws an error if group name is empty', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          twitter: SinglelineText @config(groupName: "")
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      expect(() => createFieldInput(input)).toThrow({
-        message: 'group name can not be empty',
-        locations: [{ line: 3, column: 54 }],
-      });
-    });
-  });
-
-  describe('Field with reserved name', () => {
-    it('throws an error', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          id: SinglelineText
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      expect(() => createFieldInput(input)).toThrow({
-        message: 'id is a reserved field name',
-        locations: [{ line: 3, column: 11 }],
-      });
-    });
   });
 
   describe('Field marked as title', () => {
@@ -221,22 +189,6 @@ describe('createFieldInput function', () => {
       expect(() => createFieldInput(input)).toThrow({
         message: 'was expecting Boolean',
         locations: [{ line: 3, column: 52 }],
-      });
-    });
-
-    it('should throw an error if set on a wrong field type', () => {
-      const schema = `
-        type Object implements SimpleContentType {
-          myTitle: MultilineText @config(isTitle: true)
-        }
-      `;
-      const { simpleContentTypes } = parse(schema);
-      const input = simpleContentTypes[0].fields[0];
-
-      expect(() => createFieldInput(input)).toThrow({
-        message:
-          'isTitle flag is only valid on String, ID, SinglelineText fields',
-        locations: [{ line: 3, column: 20 }],
       });
     });
   });

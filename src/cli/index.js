@@ -3,6 +3,7 @@ const initCommand = require('./commands/init.js');
 const createSchema = require('./commands/create-schema.js');
 const exportSchema = require('./commands/export-schema.js');
 const diffSchema = require('./commands/diff-schema.js');
+const updateSchemaCommand = require('./commands/update-schema.js');
 
 const pkg = require('../../package.json');
 
@@ -37,6 +38,12 @@ program
   .command('diff')
   .description('Compare the local and remote schemas')
   .action(() => diffSchema(options));
+
+program
+  .command('apply')
+  .option('-f, --force', 'Automatically apply all changes (no prompt)')
+  .description('Apply the local schema changes')
+  .action(cmd => updateSchemaCommand(options, cmd));
 
 program
   .command('version')

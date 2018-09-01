@@ -1,7 +1,7 @@
 // @flow
 import type { FieldDefinitionNode } from 'graphql/language/ast';
 import type { FieldInput } from '../fields/create/index.js';
-const { GraphQLError, GraphQLString, GraphQLBoolean } = require('graphql');
+const { GraphQLString, GraphQLBoolean } = require('graphql');
 const getDirectiveValue = require('./get-directive-value.js');
 const generateLabel = require('./generate-label.js');
 const getFieldType = require('./get-field-type.js');
@@ -24,25 +24,6 @@ const typeMapping = new Map([
   ['Video', 'VIDEO'],
 ]);
 
-const reservedFieldNames = [
-  'id',
-  'slug',
-  'contentType',
-  'displayName',
-  'currentVersion',
-  'createdAt',
-  'updatedAt',
-  'project',
-  'author',
-  'status',
-  'content',
-  'liveVersionId',
-  'latestVersionId',
-  'lockId',
-  'firstPublishDate',
-  'latestPublishDate',
-];
-
 function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
   const { directives = [] } = definition;
   const groupName = getDirectiveValue(
@@ -50,11 +31,7 @@ function setGroupName(definition: FieldDefinitionNode, input: FieldInput) {
     'config',
     'groupName',
     GraphQLString,
-    v => {
-      if (v === '') {
-        throw new Error('group name can not be empty');
-      }
-    }
+    () => {}
   );
 
   if (groupName) {
@@ -69,11 +46,7 @@ function getLabel(definition: FieldDefinitionNode): string {
     'config',
     'label',
     GraphQLString,
-    v => {
-      if (v === '') {
-        throw new Error('label can not be empty');
-      }
-    }
+    () => {}
   );
 
   if (label) {
@@ -89,7 +62,7 @@ function setIncludeInDisplayName(
   definition: FieldDefinitionNode,
   input: FieldInput
 ) {
-  const { type, directives = [] } = definition;
+  const { directives = [] } = definition;
   const isTitle = getDirectiveValue(
     directives,
     'config',
@@ -99,19 +72,14 @@ function setIncludeInDisplayName(
   );
 
   if (isTitle) {
-    if (input.type !== 'TEXT_SINGLELINE') {
-      const singleLineTypes = [];
-      for (const [graphqlType, mozaikType] of typeMapping) {
-        if (mozaikType === 'TEXT_SINGLELINE') {
-          singleLineTypes.push(graphqlType);
-        }
-      }
-      throw new GraphQLError(
-        `isTitle flag is only valid on ${singleLineTypes.join(', ')} fields`,
-        type
-      );
-    }
     input.includeInDisplayName = true;
+  }
+}
+
+function setIsDeprecated(definition: FieldDefinitionNode, input: FieldInput) {
+  const { directives = [] } = definition;
+  if (directives.filter(d => d.name.value === 'deprecated').length > 0) {
+    input.isDeprecated = true;
   }
 }
 
@@ -127,13 +95,6 @@ module.exports = function createFieldInput(
     mozaikType = graphqlType.type;
   }
 
-  if (reservedFieldNames.includes(name.value)) {
-    throw new GraphQLError(
-      `${name.value} is a reserved field name`,
-      definition
-    );
-  }
-
   const input: FieldInput = {
     label: getLabel(definition),
     apiId: name.value,
@@ -147,6 +108,7 @@ module.exports = function createFieldInput(
 
   setGroupName(definition, input);
   setIncludeInDisplayName(definition, input);
+  setIsDeprecated(definition, input);
 
   return input;
 };

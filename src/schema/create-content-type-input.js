@@ -60,11 +60,7 @@ function createContentTypeInputFromEnum(
           'config',
           'label',
           GraphQLString,
-          v => {
-            if (v === '') {
-              throw new Error('label can not be empty');
-            }
-          }
+          () => {}
         ) || v.name.value;
       return {
         key: v.name.value,
