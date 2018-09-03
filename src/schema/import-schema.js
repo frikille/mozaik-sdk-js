@@ -1,16 +1,12 @@
 // @flow
-const updateSchemaMutation = require('./../project/update-schema/index.js');
+const importSchemaMutation = require('./../project/import-schema/index.js');
 const fs = require('fs');
 
 type Options = {
   filename: string,
-  applyDangerousChanges: boolean,
 };
 
-module.exports = async function updateSchema({
-  filename,
-  applyDangerousChanges,
-}: Options) {
+module.exports = async function importSchema({ filename }: Options) {
   let schema;
   try {
     schema = fs.readFileSync(filename);
@@ -18,9 +14,8 @@ module.exports = async function updateSchema({
     throw new Error(`failed to read ${filename}`);
   }
 
-  const apiResult = await updateSchemaMutation({
+  const apiResult = await importSchemaMutation({
     schema: String(schema),
-    applyDangerousChanges,
   });
 
   // checking GraphQL errors
@@ -30,7 +25,7 @@ module.exports = async function updateSchema({
   }
 
   // checking result errors
-  errors = apiResult.data.updateSchema.errors || [];
+  errors = apiResult.data.importSchema.errors || [];
   if (errors && errors.length > 0) {
     throw new Error(errors[0].message);
   }

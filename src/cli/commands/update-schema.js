@@ -4,13 +4,19 @@ const printSchemaDiff = require('../../schema/print-schema-diff.js');
 const updateSchema = require('../../schema/update-schema.js');
 const logger = require('../../utils/ora-logger.js');
 const readline = require('readline');
+const hrtimeToMillis = require('../../utils/hrtime-to-millis.js');
 
 function apply(options: Object) {
   logger.start('Applying schema changes');
+  const startTime = process.hrtime();
 
   updateSchema({ filename: options.schemaPath, applyDangerousChanges: true })
     .then(() => {
-      logger.succeed();
+      const endTime = process.hrtime(startTime);
+      const time = hrtimeToMillis(endTime);
+      logger.succeed(
+        `Schema update finished in ${parseFloat(time / 1000).toFixed(3)}s`
+      );
     })
     .catch(err => {
       logger.fail(`Error updating schema: ${err.message}`);
@@ -22,8 +28,15 @@ module.exports = async function updateSchemaCommand(
   options: Object,
   { force }: Object
 ) {
-  const schemaDiff = await getSchemaDiff({ filename: options.schemaPath });
-  printSchemaDiff(schemaDiff);
+  let schemaDiff;
+  try {
+    schemaDiff = await getSchemaDiff({ filename: options.schemaPath });
+    printSchemaDiff(schemaDiff);
+  } catch (err) {
+    logger.fail(`Error getting schema changes: ${err.message}`);
+    process.exit(1);
+    return;
+  }
 
   if (schemaDiff.contentTypeChanges.length === 0) {
     return;

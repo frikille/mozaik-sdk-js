@@ -2,8 +2,8 @@
 const MozaikAPI = require('../../api');
 
 const updateSchemaMutationQuery = `
-  mutation updateSchema($newSchema: String!, $applyDangerousChanges: Boolean) {
-    updateSchema(newSchema: $newSchema, applyDangerousChanges: $applyDangerousChanges) {
+  mutation importSchema($schema: String!) {
+    importSchema(schema: $schema) {
       contentTypeChanges {
         type
         severity
@@ -71,18 +71,16 @@ const updateSchemaMutationQuery = `
 
 type Params = {
   schema: string,
-  applyDangerousChanges: boolean,
 };
 
-function updateSchemaMutation({ schema, applyDangerousChanges }: Params) {
+function importSchemaMutation({ schema }: Params) {
   return MozaikAPI.call({
     query: updateSchemaMutationQuery,
     variables: {
-      newSchema: schema,
-      applyDangerousChanges,
+      schema,
     },
-    operationName: 'updateSchema',
+    operationName: 'importSchema',
   });
 }
 
-module.exports = updateSchemaMutation;
+module.exports = importSchemaMutation;
