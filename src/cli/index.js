@@ -51,3 +51,7 @@ program
   .action(() => console.log(pkg.version)); // eslint-disable-line
 
 program.parse(process.argv);
+
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}
