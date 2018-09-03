@@ -61,6 +61,7 @@ const updateSchemaMutationQuery = `
         }
       }
       errors {
+        code
         key
         message
       }

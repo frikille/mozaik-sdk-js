@@ -1,6 +1,5 @@
 // @flow
 const updateSchemaMutation = require('./../project/update-schema/index.js');
-
 const fs = require('fs');
 
 type Options = {
