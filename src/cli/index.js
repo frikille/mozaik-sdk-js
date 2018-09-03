@@ -1,6 +1,6 @@
 const program = require('commander');
 const initCommand = require('./commands/init.js');
-const createSchema = require('./commands/create-schema.js');
+const importSchema = require('./commands/import-schema.js');
 const exportSchema = require('./commands/export-schema.js');
 const diffSchema = require('./commands/diff-schema.js');
 const updateSchemaCommand = require('./commands/update-schema.js');
@@ -55,9 +55,9 @@ const schemaCommand = program
   .forwardSubcommands();
 
 schemaCommand
-  .command('create')
-  .description('Create schema from mozaik-schema.graphql')
-  .action(() => createSchema(options));
+  .command('import')
+  .description('Import schema from mozaik-schema.graphql')
+  .action(() => importSchema(options));
 
 schemaCommand
   .command('export')
