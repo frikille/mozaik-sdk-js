@@ -5,6 +5,7 @@ import type { SchemaChangeSeverity } from '../enums/SchemaChangeSeverity.js';
 import type { SchemaAttributeChange } from './SchemaAttributeChange.js';
 import type { SchemaFieldChange } from './SchemaFieldChange.js';
 import type { SchemaEnumValueChange } from './SchemaEnumValueChange.js';
+import type { SchemaUnionMemberChange } from './SchemaUnionMemberChange.js';
 import type {
   ContentTypeInput,
   ContentTypeUpdateInput,
@@ -18,6 +19,7 @@ const schemaContentTypeChange = `
     attributeChanges: [SchemaAttributeChange]
     fieldChanges: [SchemaFieldChange]
     enumValueChanges: [SchemaEnumValueChange]
+    unionMemberChanges: [SchemaUnionMemberChange]
     description: String
   }
 `;
@@ -29,9 +31,10 @@ export type SchemaContentTypeChange = {|
   severity: SchemaChangeSeverity,
   id?: string,
   name: string,
-  attributeChanges: Array<SchemaAttributeChange>,
-  fieldChanges: Array<SchemaFieldChange>,
-  enumValueChanges: Array<SchemaEnumValueChange>,
+  attributeChanges?: Array<SchemaAttributeChange>,
+  fieldChanges?: Array<SchemaFieldChange>,
+  enumValueChanges?: Array<SchemaEnumValueChange>,
+  unionMemberChanges?: Array<SchemaUnionMemberChange>,
   description?: string,
   input?: ContentTypeInput | ContentTypeUpdateInput,
 |};
