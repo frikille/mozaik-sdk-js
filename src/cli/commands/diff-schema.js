@@ -4,6 +4,7 @@ const printSchemaDiff = require('../../schema/print-schema-diff.js');
 const logger = require('../../utils/ora-logger.js');
 
 module.exports = async function diffSchema(options: Object) {
+  logger.start('Getting schema changes');
   getSchemaDiff({ filename: options.schemaPath })
     .then(schemaDiff => {
       printSchemaDiff(schemaDiff);

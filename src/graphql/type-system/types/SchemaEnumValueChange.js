@@ -20,6 +20,6 @@ export type SchemaEnumValueChange = {|
   type: SchemaChangeType,
   severity: SchemaChangeSeverity,
   name: string,
-  attributeChanges: Array<SchemaAttributeChange>,
+  attributeChanges?: Array<SchemaAttributeChange>,
   description?: string,
 |};

@@ -60,6 +60,25 @@ const getSchemaChangesQuery = `
               description
             }
           }
+          unionMemberChanges {
+            type
+            severity
+            name
+            description
+            attributeChanges {
+              type
+              severity
+              name
+              from
+              to
+              description
+            }
+          }
+        },
+        errors {
+          code
+          key
+          message
         }
       }
     }

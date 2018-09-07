@@ -25,7 +25,7 @@ export type SchemaFieldValidationChange = {|
   severity: SchemaChangeSeverity,
   id?: number,
   name: string,
-  attributeChanges: Array<SchemaAttributeChange>,
+  attributeChanges?: Array<SchemaAttributeChange>,
   description?: string,
   input?: FieldValidationInput | FieldValidationUpdateInput,
 |};

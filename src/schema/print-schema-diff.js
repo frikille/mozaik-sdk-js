@@ -5,6 +5,7 @@ import type { SchemaContentTypeChange } from '../graphql/type-system/types/Schem
 import type { SchemaFieldChange } from '../graphql/type-system/types/SchemaFieldChange.js';
 import type { SchemaFieldValidationChange } from '../graphql/type-system/types/SchemaFieldValidationChange.js';
 import type { SchemaEnumValueChange } from '../graphql/type-system/types/SchemaEnumValueChange.js';
+import type { SchemaUnionMemberChange } from '../graphql/type-system/types/SchemaUnionMemberChange.js';
 import type { SchemaAttributeChange } from '../graphql/type-system/types/SchemaAttributeChange.js';
 import type { SchemaChangeType } from '../graphql/type-system/enums/SchemaChangeType.js';
 import type { SchemaChangeSeverity } from '../graphql/type-system/enums/SchemaChangeSeverity.js';
@@ -67,8 +68,33 @@ function getEnumValueChange(enumValueChange: SchemaEnumValueChange): string {
 
   res += colorLine(severity, `${typeStr} Enum value "${name}"`, description);
 
-  for (let attributeChange of enumValueChange.attributeChanges) {
-    res += indentLines(getAttributeChange(attributeChange), 2);
+  const { attributeChanges = [] } = enumValueChange;
+
+  if (type != 'DELETED') {
+    for (let attributeChange of attributeChanges) {
+      res += indentLines(getAttributeChange(attributeChange), 2);
+    }
+  }
+
+  return res;
+}
+
+function getUnionMemberChange(
+  unionMemberChange: SchemaUnionMemberChange
+): string {
+  let res = '';
+
+  const { type, severity, name, description } = unionMemberChange;
+  const typeStr = getSchemaChangeType(type);
+
+  res += colorLine(severity, `${typeStr} Union member "${name}"`, description);
+
+  const { attributeChanges = [] } = unionMemberChange;
+
+  if (type != 'DELETED') {
+    for (let attributeChange of attributeChanges) {
+      res += indentLines(getAttributeChange(attributeChange), 2);
+    }
   }
 
   return res;
@@ -84,8 +110,12 @@ function getFieldValidationChange(
 
   res += colorLine(severity, `${typeStr} Validation "${name}"`, description);
 
-  for (let attributeChange of fieldValidationChange.attributeChanges) {
-    res += indentLines(getAttributeChange(attributeChange), 2);
+  const { attributeChanges = [] } = fieldValidationChange;
+
+  if (type != 'DELETED') {
+    for (let attributeChange of attributeChanges) {
+      res += indentLines(getAttributeChange(attributeChange), 2);
+    }
   }
 
   return res;
@@ -99,11 +129,15 @@ function getFieldChange(fieldChange: SchemaFieldChange): string {
 
   res += colorLine(severity, `${typeStr} Field "${name}"`, description);
 
-  for (let attributeChange of fieldChange.attributeChanges) {
-    res += indentLines(getAttributeChange(attributeChange), 2);
-  }
-  for (let fieldValidationChange of fieldChange.validationChanges) {
-    res += indentLines(getFieldValidationChange(fieldValidationChange), 2);
+  const { attributeChanges = [], validationChanges = [] } = fieldChange;
+
+  if (type != 'DELETED') {
+    for (let attributeChange of attributeChanges) {
+      res += indentLines(getAttributeChange(attributeChange), 2);
+    }
+    for (let fieldValidationChange of validationChanges) {
+      res += indentLines(getFieldValidationChange(fieldValidationChange), 2);
+    }
   }
 
   return res;
@@ -119,14 +153,26 @@ function getContentTypeChange(
 
   res += colorLine(severity, `${typeStr} Content type "${name}"`, description);
 
-  for (let attributeChange of contentTypeChange.attributeChanges) {
-    res += indentLines(getAttributeChange(attributeChange), 2);
-  }
-  for (let fieldChange of contentTypeChange.fieldChanges) {
-    res += indentLines(getFieldChange(fieldChange), 2);
-  }
-  for (let enumValueChange of contentTypeChange.enumValueChanges) {
-    res += indentLines(getEnumValueChange(enumValueChange), 2);
+  const {
+    attributeChanges = [],
+    fieldChanges = [],
+    enumValueChanges = [],
+    unionMemberChanges = [],
+  } = contentTypeChange;
+
+  if (type != 'DELETED') {
+    for (let attributeChange of attributeChanges) {
+      res += indentLines(getAttributeChange(attributeChange), 2);
+    }
+    for (let fieldChange of fieldChanges) {
+      res += indentLines(getFieldChange(fieldChange), 2);
+    }
+    for (let enumValueChange of enumValueChanges) {
+      res += indentLines(getEnumValueChange(enumValueChange), 2);
+    }
+    for (let unionMemberChange of unionMemberChanges) {
+      res += indentLines(getUnionMemberChange(unionMemberChange), 2);
+    }
   }
 
   return res;

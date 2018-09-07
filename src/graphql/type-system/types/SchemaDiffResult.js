@@ -6,6 +6,7 @@ const schemaFieldChange = require('./SchemaFieldChange.js');
 const schemaFieldValidationChange = require('./SchemaFieldValidationChange.js');
 const schemaAttributeChange = require('./SchemaAttributeChange.js');
 const schemaEnumValueChange = require('./SchemaEnumValueChange.js');
+const schemaUnionMemberChange = require('./SchemaUnionMemberChange.js');
 const schemaChangeType = require('../enums/SchemaChangeType.js');
 const schemaChangeSeverity = require('../enums/SchemaChangeSeverity.js');
 
@@ -22,6 +23,7 @@ module.exports = () => [
   schemaFieldValidationChange,
   schemaAttributeChange,
   schemaEnumValueChange,
+  schemaUnionMemberChange,
   schemaChangeType,
   schemaChangeSeverity,
 ];
