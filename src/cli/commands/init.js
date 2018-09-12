@@ -7,18 +7,18 @@ const MOZAIK_CONFIG_NAME = '.mozaikrc';
 
 const EMPTY_SCHEMA = `
 # An example 
-# type Author implements SimpleContentType {
+# type Author {
 #   name: SinglelineText @config(groupName: "personal", isTitle: true)
 #   email: SinglelineText @config(groupName: "personal")
 #   twitter: SinglelineText @config(groupName: "social")
 # }
 
-# type Category implements SimpleContentType {
+# type Category {
 #   name: String @config(isTitle: true)
 #   subcategories: [Category]
 # }
 
-# type Post implements SimpleContentType {
+# type Post {
 #   title: String @config(isTitle: true)
 #   body: RichText
 #   postAuthor: Author
@@ -31,13 +31,13 @@ const EMPTY_SCHEMA = `
 #   lightRed @config(label: "Light red")
 # }
 
-# type FeaturedImage implements EmbeddableContentType {
+# type FeaturedImage @embeddable {
 #   url: String
 #   title: String @config(isTitle: true)
 #   background: ColorEnum
 # }
 
-# type Homepage implements SingletonContentType {
+# type Homepage @singleton {
 #   title: String @config(isTitle: true)
 #   highlightedPost: [Post]
 # }

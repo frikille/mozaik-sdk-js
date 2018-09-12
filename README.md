@@ -110,18 +110,18 @@ See the built-in help for more information about the specific commands.
 The Mozaik Schema Definition Language (mSDL) is built on top of the GraphQL Schema Definition Language (GraphQL SDL). 
 
 ```graphql
-type Author implements SimpleContentType {
+type Author {
   name: SinglelineText @config(groupName: "personal", isTitle: true)
   email: SinglelineText @config(groupName: "personal")
   twitter: SinglelineText @config(groupName: "social")
 }
 
-type Category implements SimpleContentType {
+type Category {
   name: String @config(isTitle: true)
   subcategories: [Category]
 }
 
-type Post implements SimpleContentType {
+type Post {
   title: String @config(isTitle: true)
   body: RichText
   postAuthor: Author
@@ -134,33 +134,36 @@ enum ColorEnum {
   lightRed @config(label: "Light red")
 }
 
-type FeaturedImage implements EmbeddableContentType {
+type FeaturedImage @embeddable {
   url: String
   title: String @config(isTitle: true)
   background: ColorEnum
 }
 
-type Homepage implements SingletonContentType {
+type Homepage @singleton {
   title: String @config(isTitle: true)
   highlightedPost: [Post]
 }
 ```
 
-#### Interfaces
+#### Content Types
 
-To define a content type in Mozaik, a type definition must implement one of the following interfaces
+There are five content types available:
+- simple (type definition)
+- embeddable (type definition)
+- singleton (type definition)
+- enumeration (enum definition)
+- union (union definition)
 
-- `SimpleContentType`
-- `SingletonContentType`
-- `EmbeddableContentType`
+You can use the `@embeddable` and `@singleton` directives to set the content type on a type definition. If a type definition does not have any of these directives then it's a simple content type.
 
 Your can read more about the different content types in the [Mozaik docs](https://www.mozaik.io/docs/our-approach#content-types)
 
-#### Scalars
+#### Types
 
-The following scalars can be used to define a field value besides the default GraphQL scalars.
+The following types can be used to define a field value besides the default GraphQL scalars.
 
-- `SinglelineText`
+- `SinglelineText` (same as String)
 - `MultilineText`
 - `RichText`
 - `Date`
@@ -176,23 +179,40 @@ By defining a GraphQL enum type, the Mozaik SDK will create an Enumeration conte
 
 #### Directives
 
-##### `@config` on a Field definition
+##### `@config` on a field definition
 
 Arguments:
 
-Name | Type | Description | Required | Default value 
----- | ---- | ----------- | -------- | -------------
-groupName | String | Sets on which tab the field should appear in the content editor | No | "Content"
-isTitle | Boolean | Marks the field to be part of the document `displayName` property | No | `false`
+Name      | Type    | Description                                                       | Required | Default value 
+--------- | ------- | ----------------------------------------------------------------- | -------- | -------------
+label     | String  | Sets the label for the field in the content editor                | No       | A readable field name will be generated from the field name
+groupName | String  | Sets on which tab the field should appear in the content editor   | No       | "Content"
+isTitle   | Boolean | Marks the field to be part of the document `displayName` property | No       | `false`
 
-##### `@config` on Enum value
+##### `@config` on enum type
 
 Arguments:
 
-Name | Type | Description | Required | Default value
----- | ---- | ----------- | -------- | -------------
-label | String | Defines the label that appears in the select dropdown | No | The enum value
+Name  | Type   | Description                                           | Required | Default value
+----- | ------ | ----------------------------------------------------- | -------- | -------------
+label | String | Defines the label that appears in the select dropdown | No       | The enum value
 
+
+
+##### `@config` on Union type
+
+Arguments:
+
+Name   | Type   | Description                                           | Required | Default value
+------ | ------ | ----------------------------------------------------- | -------- | -------------
+labels | Object | Defines the labels for the union members              | No       | -
+
+In the `labels` object the keys should be the union members and the values are the labels.
+Example:
+
+```
+union Widget @config(labels: {Post: "Post label", FeaturedImage: "Featured image label"}) = Post | FeaturedImage
+```
 
 ### SDK
 
